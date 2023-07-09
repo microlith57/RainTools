@@ -52,16 +52,5 @@ namespace Celeste.Mod.RainTools {
                 return 0.5f + 0.1f * Vector2.Dot(point - (CirclePos - axis), 2 * axis) / (CircleRad * 2 * CircleRad * 2);
             }
         }
-
-        internal static void Load() {
-            On.Celeste.LightingRenderer.Render += LightingRenderer_Render;
-        }
-
-        internal static void Unload() {
-            On.Celeste.LightingRenderer.Render -= LightingRenderer_Render;
-        }
-
-        private static void LightingRenderer_Render(On.Celeste.LightingRenderer.orig_Render orig, LightingRenderer self, Scene scene) {
-        }
     }
 }

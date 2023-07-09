@@ -11,6 +11,8 @@ namespace Celeste.Mod.RainTools {
     public class ShadowRendererBackdrop : Backdrop {
         public const int DOWNRES_FACTOR = 2;
 
+        public float Angle;
+
         private List<ShadowCaster> shadows;
         private ShadowRenderer.State state;
 
@@ -22,6 +24,8 @@ namespace Celeste.Mod.RainTools {
                          mipMap: false,
                          SurfaceFormat.Color, DepthFormat.Depth16);
             UseSpritebatch = false;
+
+            Angle = data.AttrFloat("angle");
         }
 
         public override void BeforeRender(Scene scene) {
@@ -36,13 +40,12 @@ namespace Celeste.Mod.RainTools {
                 var pos = bounds.Center.ToVector2();
                 var radius = (float) Math.Sqrt(Math.Pow(bounds.Width / 2, 2) + Math.Pow(bounds.Height / 2, 2));
 
-                var light = -Vector2.UnitY;
+                var light = Calc.Rotate(Vector2.UnitY, Angle);
 
                 state = new(count, light, pos, radius);
             }
 
             state.v = 0;
-            state.Light = Calc.Rotate(state.Light, 0.2f * Engine.DeltaTime);
             foreach (var shadow in shadows) {
                 shadow.UpdateVerts(state);
             }
@@ -70,12 +73,23 @@ namespace Celeste.Mod.RainTools {
             Draw.SpriteBatch.End();
         }
 
-        public override void Render(Scene scene) {
-            base.Render(scene);
+        internal static void Load() {
+            On.Celeste.LightingRenderer.BeforeRender += LightingRenderer_BeforeRender;
+        }
 
-            if (target != null && !target.IsDisposed) {
-                Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise);
-                Draw.SpriteBatch.Draw(target, Vector2.Zero, target.Bounds, Color.White * 0.8f, 0f, Vector2.Zero, DOWNRES_FACTOR, SpriteEffects.None, 0f);
+        internal static void Unload() {
+            On.Celeste.LightingRenderer.BeforeRender -= LightingRenderer_BeforeRender;
+        }
+
+        private static void LightingRenderer_BeforeRender(On.Celeste.LightingRenderer.orig_BeforeRender orig, LightingRenderer self, Scene scene) {
+            orig(self, scene);
+
+            var backdrop = (scene as Level)?.Foreground?.Get<ShadowRendererBackdrop>();
+
+            if (backdrop != null && backdrop.target != null && !backdrop.target.IsDisposed) {
+                Engine.Graphics.GraphicsDevice.SetRenderTarget(GameplayBuffers.Light);
+                Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise);
+                Draw.SpriteBatch.Draw(backdrop.target, Vector2.Zero, backdrop.target.Bounds, new Color(255, 253, 227, 255 * 0.95f), 0f, Vector2.Zero, DOWNRES_FACTOR, SpriteEffects.None, 0f);
                 Draw.SpriteBatch.End();
             }
         }

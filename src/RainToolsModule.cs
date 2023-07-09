@@ -22,11 +22,11 @@ namespace Celeste.Mod.RainTools {
         }
 
         public override void Load() {
-            ShadowRenderer.Load();
+            ShadowRendererBackdrop.Load();
         }
 
         public override void Unload() {
-            ShadowRenderer.Unload();
+            ShadowRendererBackdrop.Unload();
         }
     }
 }
