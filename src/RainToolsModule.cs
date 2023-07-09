@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.RainTools {
     public class RainToolsModule : EverestModule {
@@ -23,11 +22,11 @@ namespace Celeste.Mod.RainTools {
         }
 
         public override void Load() {
-            // TODO: apply any hooks that should always be active
+            ShadowRenderer.Load();
         }
 
         public override void Unload() {
-            // TODO: unapply any hooks applied in Load()
+            ShadowRenderer.Unload();
         }
     }
 }

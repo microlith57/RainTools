@@ -1,7 +1,5 @@
-using System;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Monocle;
 
 namespace Celeste.Mod.RainTools {
@@ -29,52 +27,49 @@ namespace Celeste.Mod.RainTools {
             }
         }
 
-        public override void UpdateVerts(ref VertexPositionColor[] verts, ref int v, Vector2 lightAngle, Vector2 pos, float radius) {
+        public override void UpdateVerts(ShadowRenderer.State state) {
             Vector2 a, b, c;
-            if (lightAngle.Y >= 0) {
-                if (lightAngle.X >= 0) {
-                    a = BottomLeft + lightAngle * Offset;
-                    b = TopLeft + lightAngle * Offset;
-                    c = TopRight + lightAngle * Offset;
+            if (state.Light.Y >= 0) {
+                if (state.Light.X >= 0) {
+                    a = BottomLeft + state.Light * Offset;
+                    b = TopLeft + state.Light * Offset;
+                    c = TopRight + state.Light * Offset;
                 } else {
-                    a = TopLeft + lightAngle * Offset;
-                    b = TopRight + lightAngle * Offset;
-                    c = BottomRight + lightAngle * Offset;
+                    a = TopLeft + state.Light * Offset;
+                    b = TopRight + state.Light * Offset;
+                    c = BottomRight + state.Light * Offset;
                 }
             } else {
-                if (lightAngle.X >= 0) {
-                    a = TopLeft + lightAngle * Offset;
-                    b = BottomLeft + lightAngle * Offset;
-                    c = BottomRight + lightAngle * Offset;
+                if (state.Light.X >= 0) {
+                    a = TopLeft + state.Light * Offset;
+                    b = BottomLeft + state.Light * Offset;
+                    c = BottomRight + state.Light * Offset;
                 } else {
-                    a = BottomLeft + lightAngle * Offset;
-                    b = BottomRight + lightAngle * Offset;
-                    c = TopRight + lightAngle * Offset;
+                    a = BottomLeft + state.Light * Offset;
+                    b = BottomRight + state.Light * Offset;
+                    c = TopRight + state.Light * Offset;
                 }
             }
-            Vector2 offsetE = lightAngle * ShadowLength;
+
+            Vector2 offset = state.Light * ShadowLength;
             Vector2 diag = (a - b) + (c - b);
-            Vector2 offsetM = offsetE + diag;
 
-            float depthA = DepthForPoint(lightAngle, pos, radius, a);
-            float depthB = DepthForPoint(lightAngle, pos, radius, b);
-            float depthC = DepthForPoint(lightAngle, pos, radius, c);
+            float depthA = state.ZPositionFor(a);
+            var a_n = new Vector3(a, depthA);
+            var a_f = new Vector3(a + offset, depthA);
 
-            verts[v].Position = new Vector3(a, depthA);           verts[v++].Color = Color;
-            verts[v].Position = new Vector3(a + offsetE, depthA); verts[v++].Color = Color;
-            verts[v].Position = new Vector3(b, depthB);           verts[v++].Color = Color;
+            float depthB = state.ZPositionFor(b);
+            var b_n = new Vector3(b, depthB);
+            var b_f = new Vector3(b + offset + diag, depthB);
 
-            verts[v].Position = new Vector3(a + offsetE, depthA); verts[v++].Color = Color;
-            verts[v].Position = new Vector3(b, depthB);           verts[v++].Color = Color;
-            verts[v].Position = new Vector3(b + offsetM, depthB); verts[v++].Color = Color;
+            float depthC = state.ZPositionFor(c);
+            var c_n = new Vector3(c, depthC);
+            var c_f = new Vector3(c + offset, depthC);
 
-            verts[v].Position = new Vector3(b, depthB);           verts[v++].Color = Color;
-            verts[v].Position = new Vector3(b + offsetM, depthB); verts[v++].Color = Color;
-            verts[v].Position = new Vector3(c, depthC);           verts[v++].Color = Color;
-
-            verts[v].Position = new Vector3(b + offsetM, depthB); verts[v++].Color = Color;
-            verts[v].Position = new Vector3(c, depthC);           verts[v++].Color = Color;
-            verts[v].Position = new Vector3(c + offsetE, depthC); verts[v++].Color = Color;
+            state.Triangle(a_n, a_f, b_n, Color);
+            state.Triangle(a_f, b_n, b_f, Color);
+            state.Triangle(b_n, b_f, c_n, Color);
+            state.Triangle(b_f, c_n, c_f, Color);
         }
     }
 }

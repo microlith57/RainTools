@@ -12,8 +12,7 @@ namespace Celeste.Mod.RainTools {
         public const int DOWNRES_FACTOR = 2;
 
         private List<ShadowCaster> shadows;
-        private VertexPositionColor[] verts;
-        private int num_verts;
+        private ShadowRenderer.State state;
 
         private RenderTarget2D target;
 
@@ -28,23 +27,24 @@ namespace Celeste.Mod.RainTools {
         public override void BeforeRender(Scene scene) {
             base.BeforeRender(scene);
 
-            if (shadows == null || verts == null) {
+            if (shadows == null || state == null) {
                 shadows = scene.Tracker.GetEntitiesCopy<ShadowCaster>().ConvertAll((e) => e as ShadowCaster);
                 shadows.Sort((a, b) => a.Y < b.Y ? -1 : 1);
-                int count = shadows.Sum((e) => e.MaxTriCount);
-                verts = new VertexPositionColor[count * 3];
+                int count = shadows.Sum((e) => e.MaxTriCount * 3);
 
                 var bounds = (scene as Level).Bounds;
                 var pos = bounds.Center.ToVector2();
                 var radius = (float) Math.Sqrt(Math.Pow(bounds.Width / 2, 2) + Math.Pow(bounds.Height / 2, 2));
 
-                var lightAngle = Calc.Rotate(Vector2.UnitY, (float) (-0.2 * Math.PI));
+                var light = -Vector2.UnitY;
 
-                int v = 0;
-                foreach (var shadow in shadows) {
-                    shadow.UpdateVerts(ref verts, ref v, lightAngle, pos, radius);
-                }
-                num_verts = v;
+                state = new(count, light, pos, radius);
+            }
+
+            state.v = 0;
+            state.Light = Calc.Rotate(state.Light, 0.2f * Engine.DeltaTime);
+            foreach (var shadow in shadows) {
+                shadow.UpdateVerts(state);
             }
 
             var cam_pos = (scene as Level).Camera.Position;
@@ -55,12 +55,11 @@ namespace Celeste.Mod.RainTools {
 
             var mat = Matrix.CreateTranslation(new(-cam_pos, 0f))
                     * Matrix.CreateScale(new Vector3(Vector2.One / DOWNRES_FACTOR, 1f))
-                    * Matrix.CreateTranslation(new(offset, 0f))
-                    ;
+                    * Matrix.CreateTranslation(new(offset, 0f));
 
             Engine.Graphics.GraphicsDevice.SetRenderTarget(GameplayBuffers.TempA);
             Engine.Graphics.GraphicsDevice.Clear(Color.White);
-            GFX.DrawVertices(mat, verts, num_verts);
+            GFX.DrawVertices(mat, state.verts, state.v);
 
             GaussianBlur.Blur(GameplayBuffers.TempA, GameplayBuffers.TempB, GameplayBuffers.TempA, sampleScale: 2f);
             GaussianBlur.Blur(GameplayBuffers.TempA, GameplayBuffers.TempB, GameplayBuffers.TempA, sampleScale: 1f);

@@ -29,11 +29,11 @@ namespace Celeste.Mod.RainTools {
             Nodes = data.NodesOffset(offset);
         }
 
-        public override void UpdateVerts(ref VertexPositionColor[] verts, ref int v, Vector2 lightAngle, Vector2 pos, float radius) {
-            var posA = Position + Offset * lightAngle;
+        public override void UpdateVerts(ShadowRenderer.State state) {
+            var posA = Position + Offset * state.Light;
             for (int i = 0; i < Nodes.Length; i++) {
-                var posB = Nodes[i] + Offset * lightAngle;
-                ShadowCaster.Parallelogram(ref verts, ref v, lightAngle, pos, radius, posA, posB, ShadowLength, Color);
+                var posB = Nodes[i] + Offset * state.Light;
+                state.Parallelogram(posA, posB, ShadowLength, Color);
                 posA = posB;
             }
         }
