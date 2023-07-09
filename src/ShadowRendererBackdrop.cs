@@ -55,6 +55,7 @@ namespace Celeste.Mod.RainTools {
             cam_pos.Y = (float) Math.Round(cam_pos.Y);
 
             var offset = (new Vector2(320, 180) - new Vector2(target.Width, target.Height)) / 2f;
+            offset += new Vector2(cam_pos.X % 2, cam_pos.Y % 2);
 
             var mat = Matrix.CreateTranslation(new(-cam_pos, 0f))
                     * Matrix.CreateScale(new Vector3(Vector2.One / DOWNRES_FACTOR, 1f))
@@ -62,7 +63,8 @@ namespace Celeste.Mod.RainTools {
 
             Engine.Graphics.GraphicsDevice.SetRenderTarget(GameplayBuffers.TempA);
             Engine.Graphics.GraphicsDevice.Clear(Color.White);
-            GFX.DrawVertices(mat, state.verts, state.v);
+            if (state.v > 0)
+                GFX.DrawVertices(mat, state.verts, state.v);
 
             GaussianBlur.Blur(GameplayBuffers.TempA, GameplayBuffers.TempB, GameplayBuffers.TempA, sampleScale: 2f);
             GaussianBlur.Blur(GameplayBuffers.TempA, GameplayBuffers.TempB, GameplayBuffers.TempA, sampleScale: 1f);
