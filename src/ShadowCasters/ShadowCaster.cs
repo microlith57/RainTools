@@ -11,6 +11,6 @@ namespace Celeste.Mod.RainTools {
             MaxTriCount = maxTriCount;
         }
 
-        public abstract void UpdateVerts(ShadowRenderer.State state);
+        public abstract void UpdateVerts(DirectionalLightingRenderer state);
     }
 }

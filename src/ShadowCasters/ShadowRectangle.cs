@@ -27,7 +27,7 @@ namespace Celeste.Mod.RainTools {
             }
         }
 
-        public override void UpdateVerts(ShadowRenderer.State state) {
+        public override void UpdateVerts(DirectionalLightingRenderer state) {
             Vector2 a, b, c;
             if (state.Light.Y >= 0) {
                 if (state.Light.X >= 0) {

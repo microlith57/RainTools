@@ -29,7 +29,7 @@ namespace Celeste.Mod.RainTools {
             Nodes = data.NodesOffset(offset);
         }
 
-        public override void UpdateVerts(ShadowRenderer.State state) {
+        public override void UpdateVerts(DirectionalLightingRenderer state) {
             var posA = Position + Offset * state.Light;
             for (int i = 0; i < Nodes.Length; i++) {
                 var posB = Nodes[i] + Offset * state.Light;
