@@ -7,50 +7,90 @@ using System.Linq;
 
 namespace Celeste.Mod.RainTools {
     public class DirectionalLightingRenderer {
+        private const int RESIZE_DOWN_BUFFER = 28 * 3;
+        private const int RESIZE_UP_BUFFER = 16 * 3;
 
         // todo
-        public readonly Vector2 CenterPos = Vector2.Zero;
-        public readonly float CircleRad = 1000f;
+        public Vector2 CenterPos = Vector2.Zero;
+        public float CircleRad = 1000f;
 
-        public Vector2 Light;
-        private Vector2? prevLight;
+        public Vector2 _light;
+        public Vector2 Light {
+            get => _light;
+            set {
+                if ((_light - value).LengthSquared() <= 0.1f)
+                    InvalidateGeometry();
+                _light = value;
+            }
+        }
 
         public VertexPositionColor[] verts;
         public int v;
+        private bool valid;
+        private int capacity_target;
 
-        private List<ShadowCaster> Shadows;
+        public List<ShadowCaster> Shadows;
+
+        public DirectionalLightingRenderer(Vector2 light) {
+            _light = light;
+
+            Shadows = new();
+            capacity_target = 0;
+            verts = new VertexPositionColor[0];
+            v = 0;
+            valid = true;
+        }
 
         public DirectionalLightingRenderer(Vector2 light, IEnumerable<ShadowCaster> shadows) {
-            Light = light;
-            prevLight = null;
-            // CenterPos = pos;
+            _light = light;
 
             Shadows = shadows.ToList();
-            var capacity = Shadows.Sum((shadow) => shadow.MaxTriCount) * 3;
-
-            verts = new VertexPositionColor[capacity];
-            v = 0;
+            InvalidateCapacity();
         }
 
-        public bool ShouldRegen() {
-            return !prevLight.HasValue
-                || ((Light.Angle() - prevLight.Value.Angle()) % (2f * Math.PI)) > 0.01f
-                || (Light.Length() - prevLight.Value.Length()) > 0.01f;
+        public void InvalidateGeometry() {
+            valid = false;
         }
 
-        public void RegenGeometry(bool force = false) {
-            if (!force && !ShouldRegen())
+        public void Add(ShadowCaster shadow) {
+            Shadows.Add(shadow);
+            capacity_target += shadow.MaxTriCount;
+            InvalidateGeometry();
+        }
+
+        public bool Remove(ShadowCaster shadow) {
+            if (Shadows.Remove(shadow)) {
+                capacity_target -= shadow.MaxTriCount;
+                InvalidateGeometry();
+                return true;
+            }
+            return false;
+        }
+
+        public void InvalidateCapacity() {
+            capacity_target = Shadows.Sum((shadow) => shadow.MaxTriCount) * 3;
+            InvalidateGeometry();
+        }
+
+        public void Generate(bool force = false) {
+            if (!force && valid)
                 return;
+
+            if (capacity_target < 0)
+                capacity_target = 0;
+
+            if (verts == null || capacity_target > verts.Length || capacity_target + RESIZE_DOWN_BUFFER < verts.Length)
+                verts = new VertexPositionColor[capacity_target + RESIZE_UP_BUFFER];
 
             v = 0;
             foreach (var shadow in Shadows) {
                 shadow.UpdateVerts(this);
             }
-            prevLight = Light;
+            valid = true;
         }
 
         public void Draw(Matrix mat) {
-            if (v > 0)
+            if (verts != null && v > 0)
                 GFX.DrawVertices(mat, verts, v);
         }
 

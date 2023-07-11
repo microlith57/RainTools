@@ -38,7 +38,7 @@ namespace Celeste.Mod.RainTools {
                 state = new(light, shadows);
             }
 
-            state.RegenGeometry();
+            state.Generate();
 
             var cam_pos = (scene as Level).Camera.Position;
             cam_pos.X = (float) Math.Round(cam_pos.X);

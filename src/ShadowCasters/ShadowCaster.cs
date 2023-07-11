@@ -9,6 +9,7 @@ namespace Celeste.Mod.RainTools {
 
         public ShadowCaster(Vector2 position, int maxTriCount) : base(position) {
             MaxTriCount = maxTriCount;
+            Tag |= Tags.Persistent;
         }
 
         public abstract void UpdateVerts(DirectionalLightingRenderer state);
