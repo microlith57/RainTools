@@ -22,10 +22,12 @@ namespace Celeste.Mod.RainTools {
         }
 
         public override void Load() {
+            ShadowCaster.Load();
             LightingStyleground.Load();
         }
 
         public override void Unload() {
+            ShadowCaster.Unload();
             LightingStyleground.Unload();
         }
     }
