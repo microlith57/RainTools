@@ -20,6 +20,7 @@
     </ItemDefinitionGroup>
 
     <ItemGroup>
+        <PackageReference Include="MonoMod" Version="22.01.04.03" PrivateAssets="all" ExcludeAssets="runtime" />
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.01.04.03" PrivateAssets="all" ExcludeAssets="runtime" />
     </ItemGroup>
 
@@ -59,11 +60,11 @@
     <Target Name="CopyFiles" AfterTargets="Build">
         <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFolder="bin" />
     </Target>
-    
+
     <PropertyGroup>
         <PathMap>$(MSBuildProjectDirectory)=RainTools/</PathMap>
     </PropertyGroup>
-    
+
     <PropertyGroup>
         <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
     </PropertyGroup>

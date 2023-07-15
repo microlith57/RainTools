@@ -17,6 +17,9 @@ namespace Celeste.Mod.RainTools {
 
             LightVisible = Visible;
             Visible = false;
+
+            if (Color.A == 0 || (Color.R == 0 && Color.G == 0 && Color.B == 0))
+                LightVisible = false;
         }
 
         public virtual void BeforeRenderLighting(Scene scene) { }
@@ -57,9 +60,7 @@ namespace Celeste.Mod.RainTools {
                     backdrop.RenderLighting(level);
                 }
             }
-            if (usingSpritebatch)
-                EndSpritebatch(ref usingSpritebatch);
-
+            EndSpritebatch(ref usingSpritebatch);
         }
 
         private static void StartSpritebatch(ref bool usingSpritebatch) {

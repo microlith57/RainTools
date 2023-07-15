@@ -16,15 +16,7 @@ namespace Celeste.Mod.RainTools {
 
             Offset = data.Float("offset", 0f);
             ShadowLength = data.Float("length", 400f);
-
-            var letsInLight = data.Bool("letsInLight", false);
-            var alpha = data.Float("alpha", 1f);
-
-            if (letsInLight) {
-                Color = Color.White * alpha;
-            } else {
-                Color = Color.Black * alpha;
-            }
+            Color = Calc.HexToColor(data.Attr("color", "000000")) * data.Float("alpha", 1f);
 
             Nodes = data.NodesOffset(offset);
         }

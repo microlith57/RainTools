@@ -7,6 +7,7 @@ namespace Celeste.Mod.RainTools {
     public class ShadowRectangle : ShadowCaster {
         public float ShadowLength, Offset;
         public Color Color;
+        public bool Inverted;
 
         public ShadowRectangle(EntityData data, Vector2 offset)
             : base(data.Position + offset, maxTriCount: 4) {
@@ -16,18 +17,15 @@ namespace Celeste.Mod.RainTools {
 
             Offset = data.Float("offset", 0f);
             ShadowLength = data.Float("length", 400f);
+            Color = Calc.HexToColor(data.Attr("color", "000000")) * data.Float("alpha", 1f);
 
-            var letsInLight = data.Bool("letsInLight", false);
-            var alpha = data.Float("alpha", 1f);
-
-            if (letsInLight) {
-                Color = Color.White * alpha;
-            } else {
-                Color = Color.Black * alpha;
-            }
+            Inverted = data.Bool("inverted");
         }
 
         public override void UpdateVerts(DirectionalLightingRenderer state) {
+            bool left_casting = Inverted ? (state.Light.X >= 0) : (state.Light.X < 0);
+            bool top_casting  = Inverted ? (state.Light.X >= 0) : (state.Light.Y < 0);
+
             Vector2 a, b, c;
             if (state.Light.Y >= 0) {
                 if (state.Light.X >= 0) {

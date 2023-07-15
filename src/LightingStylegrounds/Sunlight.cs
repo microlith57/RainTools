@@ -10,12 +10,12 @@ namespace Celeste.Mod.RainTools {
         public const int DOWNRES_FACTOR = 2;
 
         public float Angle;
-        public Color LightColor;
         public float Blur1, Blur2;
 
         private DirectionalLightingRenderer state;
 
         private RenderTarget2D target;
+        private MTexture clouds;
 
         public Sunlight(BinaryPacker.Element data) {
             target = new(Engine.Instance.GraphicsDevice,
@@ -26,9 +26,11 @@ namespace Celeste.Mod.RainTools {
             UseSpritebatch = true;
 
             Angle = data.AttrFloat("angle", 0f);
-            LightColor = Calc.HexToColor(data.Attr("lightColor", "ffffff"));
+            Color = Calc.HexToColor(data.Attr("lightColor", "ffffff"));
             Blur1 = data.AttrFloat("blur1", 2f);
             Blur2 = data.AttrFloat("blur2", 1f);
+
+            clouds = GFX.Game["bgs/microlith57/RainTools/clouds"];
         }
 
         public override void BeforeRenderLighting(Scene scene) {
@@ -57,6 +59,11 @@ namespace Celeste.Mod.RainTools {
 
             if (Blur1 > 0)
                 GaussianBlur.Blur(GameplayBuffers.TempA, GameplayBuffers.TempB, GameplayBuffers.TempA, sampleScale: Blur1);
+
+            // Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise);
+            // clouds.Draw(Vector2.Zero, Vector2.Zero, Color.White);
+            // Draw.SpriteBatch.End();
+
             if (Blur2 > 0)
                 GaussianBlur.Blur(GameplayBuffers.TempA, GameplayBuffers.TempB, GameplayBuffers.TempA, sampleScale: Blur2);
 
@@ -69,7 +76,7 @@ namespace Celeste.Mod.RainTools {
         public override void RenderLighting(Scene scene) {
             if (target == null || target.IsDisposed)
                 return;
-            Draw.SpriteBatch.Draw(target, Vector2.Zero, target.Bounds, LightColor, 0f, Vector2.Zero, DOWNRES_FACTOR, SpriteEffects.None, 0f);
+            Draw.SpriteBatch.Draw(target, Vector2.Zero, target.Bounds, Color, 0f, Vector2.Zero, DOWNRES_FACTOR, SpriteEffects.None, 0f);
         }
     }
 }
