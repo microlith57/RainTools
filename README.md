@@ -1,2 +1,3 @@
 # RainTools
-Replace with your mod's readme!
+
+WIP Celeste helper adding a fancy sunlight effect, and perhaps other stuff later.
