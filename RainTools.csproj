@@ -5,9 +5,11 @@
         <AssemblyName>RainTools</AssemblyName>
         <RootNamespace>Celeste.Mod.RainTools</RootNamespace>
         <LangVersion>latest</LangVersion>
+        <CelestePrefix Condition="'$(CelestePrefix)' == '' And Exists('..\..\legacyRef')">..\..</CelestePrefix>
         <CelestePrefix Condition="'$(CelestePrefix)' == '' And Exists('..\..\Celeste.exe')">..\..</CelestePrefix>
         <CelestePrefix Condition="'$(CelestePrefix)' == '' And Exists('..\..\..\Celeste.exe')">..\..\..</CelestePrefix>
         <CelestePrefix Condition="'$(CelestePrefix)' == ''">lib-stripped</CelestePrefix>
+        <CelesteType Condition="'$(CelesteType)' == '' And Exists('$(CelestePrefix)\legacyRef')">Core</CelesteType>
         <CelesteType Condition="'$(CelesteType)' == '' And Exists('$(CelestePrefix)\BuildIsXNA.txt')">XNA</CelesteType>
         <CelesteType Condition="'$(CelesteType)' == ''">FNA</CelesteType>
         <XNAPath Condition="'$(XNAPath)' == ''">$(WINDIR)\Microsoft.NET\assembly\GAC_32\{0}\v4.0_4.0.0.0__842cf8be1de50553\{0}.dll</XNAPath>
@@ -24,16 +26,38 @@
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.01.04.03" PrivateAssets="all" ExcludeAssets="runtime" />
     </ItemGroup>
 
+    <Choose>
+        <When Condition="'$(CelesteType)' == 'Core'">
+            <ItemGroup>
+                <Reference Include="$(CelestePrefix)\legacyRef\Celeste.exe">
+                    <Private>false</Private>
+                </Reference>
+            </ItemGroup>
+        </When>
+        <When Condition="'$(CelesteType)' != 'Core'">
+            <ItemGroup>
+                <Reference Include="$(CelestePrefix)\Celeste.exe">
+                    <Private>false</Private>
+                </Reference>
+            </ItemGroup>
+        </When>
+    </Choose>
+
     <ItemGroup>
-        <Reference Include="$(CelestePrefix)\Celeste.exe">
-            <Private>false</Private>
-        </Reference>
         <Reference Include="$(CelestePrefix)\MMHOOK_Celeste.dll">
             <Private>false</Private>
         </Reference>
     </ItemGroup>
 
     <Choose>
+        <When Condition="'$(CelesteType)' == 'Core'">
+            <ItemGroup>
+                <Reference Include="$(CelestePrefix)\legacyRef\FNA.dll">
+                    <Private>false</Private>
+                </Reference>
+            </ItemGroup>
+        </When>
+
         <When Condition="'$(CelesteType)' == 'FNA'">
             <ItemGroup>
                 <Reference Include="$(CelestePrefix)\FNA.dll">
