@@ -15,7 +15,7 @@ namespace Celeste.Mod.RainTools {
         private DirectionalLightingRenderer state;
 
         private RenderTarget2D target;
-        private MTexture clouds;
+        // private MTexture clouds;
 
         public Sunlight(BinaryPacker.Element data) {
             target = new(Engine.Instance.GraphicsDevice,
@@ -30,7 +30,7 @@ namespace Celeste.Mod.RainTools {
             Blur1 = data.AttrFloat("blur1", 2f);
             Blur2 = data.AttrFloat("blur2", 1f);
 
-            clouds = GFX.Game["bgs/microlith57/RainTools/clouds"];
+            // clouds = GFX.Game["bgs/microlith57/RainTools/clouds"];
         }
 
         public override void BeforeRenderLighting(Scene scene) {
