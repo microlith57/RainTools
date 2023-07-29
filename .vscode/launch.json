@@ -18,6 +18,10 @@
         "env": {
           "LD_LIBRARY_PATH": "${workspaceFolder}/../../lib64-linux:"
         }
+      },
+      "justMyCode": false,
+      "sourceFileMap": {
+        "RainTools/": "${workspaceFolder}"
       }
     },
     {

@@ -10,8 +10,10 @@ namespace Celeste.Mod.RainTools {
     [GlobalEntity]
     [CustomEntity("RainTools/ColorgradeTimeController")]
     public class ColorgradeTimeController : Entity {
-        public string StylegroundTag;
         public SortedList<float, string> Keyframes;
+
+        private EntityData _data;
+        private Vector2 _offset;
 
         public ColorgradeTimeController() : base() {
             Tag |= Tags.Persistent | Tags.TransitionUpdate | Tags.FrozenUpdate;
@@ -19,24 +21,32 @@ namespace Celeste.Mod.RainTools {
             Keyframes = new();
         }
 
-        public static Entity Load(Level level, LevelData levelData, Vector2 offset, EntityData data) {
-            var existing = level.Tracker.GetEntities<ColorgradeTimeController>()
-                                        .Cast<ColorgradeTimeController>();
+        public ColorgradeTimeController(EntityData data, Vector2 offset) : this() {
+            _data = data;
+            _offset = offset;
+        }
 
-            if (existing.Any()) {
-                existing.First().AddStop(data, offset);
-                return null;
+        public override void Added(Scene scene) {
+            base.Added(scene);
+
+            var existing = scene.Tracker.GetEntities<ColorgradeTimeController>()
+                                        .Cast<ColorgradeTimeController>()
+                                        .ToList();
+
+            if (existing.Any((c) => c != this)) {
+                existing.First().AddStop(_data, _offset);
+                RemoveSelf();
+                return;
             }
 
-            ColorgradeTimeController controller = new();
-            controller.AddStop(data, offset);
-            return controller;
+            AddStop(_data, _offset);
+            _data = null;
         }
 
         public void AddStop(EntityData data, Vector2 offset) {
             Vector2 pos = data.Position + offset;
             Vector2 nodePos = data.NodesOffset(offset)[0];
-            var angle = (pos - nodePos).Angle();
+            var angle = (nodePos - pos).Angle();
 
             Keyframes.Add(angle, data.Attr("colorgrade", "none"));
         }
@@ -75,8 +85,6 @@ namespace Celeste.Mod.RainTools {
 
                     break;
             }
-
-            // todo swap if going b->a
 
             Level level = Scene as Level;
 

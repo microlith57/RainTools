@@ -19,6 +19,9 @@ namespace Celeste.Mod.RainTools {
         public string StylegroundTag;
         public SortedList<float, Keyframe> Keyframes;
 
+        private EntityData _data;
+        private Vector2 _offset;
+
         public StylegroundTimeController(string tag) : base() {
             Tag |= Tags.Persistent | Tags.TransitionUpdate | Tags.FrozenUpdate;
 
@@ -26,35 +29,32 @@ namespace Celeste.Mod.RainTools {
             Keyframes = new();
         }
 
-        public static Entity Load(Level level, LevelData levelData, Vector2 offset, EntityData data) {
-            var tag = data.Attr("tag");
-
-            var existing = level.Tracker.GetEntities<StylegroundTimeController>()
-                                        .Cast<StylegroundTimeController>()
-                                        .Where((c) => c.StylegroundTag == tag);
-
-            if (existing.Any()) {
-                existing.First().AddStop(data, offset);
-                return null;
-            }
-
-            StylegroundTimeController controller = new(tag);
-            controller.AddStop(data, offset);
-            return controller;
+        public StylegroundTimeController(EntityData data, Vector2 offset) : this(data.Attr("tag")) {
+            _data = data;
+            _offset = offset;
         }
 
-        public override void Awake(Scene scene) {
-            base.Awake(scene);
+        public override void Added(Scene scene) {
+            base.Added(scene);
 
-            foreach (var kvp in Keyframes) {
-                Logger.Log(LogLevel.Warn, "awawawwa", $"{kvp.Key}: {kvp.Value.Color}");
+            var existing = scene.Tracker.GetEntities<StylegroundTimeController>()
+                                        .Cast<StylegroundTimeController>()
+                                        .Where((c) => c.StylegroundTag == StylegroundTag);
+
+            if (existing.Any((c) => c != this)) {
+                existing.First().AddStop(_data, _offset);
+                RemoveSelf();
+                return;
             }
+
+            AddStop(_data, _offset);
+            _data = null;
         }
 
         public void AddStop(EntityData data, Vector2 offset) {
             Vector2 pos = data.Position + offset;
             Vector2 nodePos = data.NodesOffset(offset)[0];
-            var angle = (pos - nodePos).Angle();
+            var angle = (nodePos - pos).Angle();
 
             Keyframe kf = new();
 
