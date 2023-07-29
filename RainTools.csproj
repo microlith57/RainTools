@@ -22,6 +22,10 @@
     </ItemDefinitionGroup>
 
     <ItemGroup>
+        <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="MonoMod" Version="22.01.04.03" PrivateAssets="all" ExcludeAssets="runtime" />
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.01.04.03" PrivateAssets="all" ExcludeAssets="runtime" />
     </ItemGroup>
@@ -29,14 +33,14 @@
     <Choose>
         <When Condition="'$(CelesteType)' == 'Core'">
             <ItemGroup>
-                <Reference Include="$(CelestePrefix)\legacyRef\Celeste.exe">
+                <Reference Include="$(CelestePrefix)\legacyRef\Celeste.exe" Publicize="true">
                     <Private>false</Private>
                 </Reference>
             </ItemGroup>
         </When>
         <When Condition="'$(CelesteType)' != 'Core'">
             <ItemGroup>
-                <Reference Include="$(CelestePrefix)\Celeste.exe">
+                <Reference Include="$(CelestePrefix)\Celeste.exe" Publicize="true">
                     <Private>false</Private>
                 </Reference>
             </ItemGroup>
@@ -83,6 +87,7 @@
 
     <Target Name="CopyFiles" AfterTargets="Build">
         <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFolder="bin" />
+        <Copy SourceFiles="$(OutputPath)\$(AssemblyName).pdb" DestinationFolder="bin" />
     </Target>
 
     <PropertyGroup>

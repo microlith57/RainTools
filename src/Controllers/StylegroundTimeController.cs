@@ -1,13 +1,15 @@
-using System.Linq;
-using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
+using Celeste.Mod.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using MonoMod.Utils;
 
 namespace Celeste.Mod.RainTools {
     [Tracked(true)]
     [GlobalEntity]
+    [CustomEntity("RainTools/StylegroundTimeController")]
     public class StylegroundTimeController : Entity {
         public struct Keyframe {
             public Color Color;
@@ -24,7 +26,7 @@ namespace Celeste.Mod.RainTools {
             Keyframes = new();
         }
 
-        public StylegroundTimeController Load(Level level, LevelData levelData, Vector2 offset, EntityData data) {
+        public static Entity Load(Level level, LevelData levelData, Vector2 offset, EntityData data) {
             var tag = data.Attr("tag");
 
             var existing = level.Tracker.GetEntities<StylegroundTimeController>()
@@ -39,6 +41,14 @@ namespace Celeste.Mod.RainTools {
             StylegroundTimeController controller = new(tag);
             controller.AddStop(data, offset);
             return controller;
+        }
+
+        public override void Awake(Scene scene) {
+            base.Awake(scene);
+
+            foreach (var kvp in Keyframes) {
+                Logger.Log(LogLevel.Warn, "awawawwa", $"{kvp.Key}: {kvp.Value.Color}");
+            }
         }
 
         public void AddStop(EntityData data, Vector2 offset) {
@@ -57,19 +67,43 @@ namespace Celeste.Mod.RainTools {
         public override void Update() {
             base.Update();
 
-            float time = 0f;
+            float sunAngle = RainToolsModule.Session.SunAngle;
 
-            var closest = Keyframes.OrderBy((kf) => {
-                var dist = Math.Abs(kf.Key - time);
-                if (dist > Math.PI)
-                    dist -= (float) Math.PI;
-                return dist;
-            });
+            Color color;
+            float alpha;
+
+            switch (Keyframes.Count()) {
+                case 0:
+                    throw new NotImplementedException("unreachable code reached!");
+                case 1:
+                    var kvp = Keyframes.First();
+                    color = kvp.Value.Color;
+                    alpha = kvp.Value.Alpha;
+                    break;
+                default:
+                    var closest = Keyframes.OrderBy((kvp) => Calc.AbsAngleDiff(kvp.Key, sunAngle));
+
+                    var a = closest.ElementAt(0);
+                    var b = closest.ElementAt(1);
+
+                    float dist_a_sun = Calc.AbsAngleDiff(a.Key, sunAngle);
+                    float dist_b_sun = Calc.AbsAngleDiff(b.Key, sunAngle);
+                    float fac = Calc.Clamp((dist_a_sun) / (dist_a_sun + dist_b_sun), 0f, 1f);
+
+                    color = Color.Lerp(a.Value.Color, b.Value.Color, fac);
+                    alpha = MathHelper.Lerp(a.Value.Alpha, b.Value.Alpha, fac);
+
+                    break;
+            }
 
             foreach (var bg in (Scene as Level).Background.GetEach<Backdrop>(StylegroundTag)) {
+                bg.Color = color;
+                DynamicData.For(bg).Set("Alpha", alpha);
             }
 
             foreach (var fg in (Scene as Level).Foreground.GetEach<Backdrop>(StylegroundTag)) {
+                fg.Color = color;
+                DynamicData.For(fg).Set("Alpha", alpha);
             }
         }
     }

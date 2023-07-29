@@ -25,7 +25,7 @@ namespace Celeste.Mod.RainTools {
 
             UseSpritebatch = true;
 
-            Angle = data.AttrFloat("angle", 0f);
+            Angle = data.AttrFloat("angle", (float) Math.PI / 2f);
             Color = Calc.HexToColor(data.Attr("lightColor", "ffffff"));
             Blur1 = data.AttrFloat("blur1", 2f);
             Blur2 = data.AttrFloat("blur2", 1f);
@@ -34,10 +34,12 @@ namespace Celeste.Mod.RainTools {
         }
 
         public override void BeforeRenderLighting(Scene scene) {
+            var light = Calc.Rotate(Vector2.UnitX, RainToolsModule.Session.SunAngle);
             if (state == null) {
-                var light = Calc.Rotate(Vector2.UnitY, Angle);
                 var shadows = scene.Tracker.GetEntitiesCopy<ShadowCaster>().ConvertAll((e) => e as ShadowCaster);
                 state = new(light, shadows);
+            } else {
+                state.Light = light;
             }
 
             state.Generate();

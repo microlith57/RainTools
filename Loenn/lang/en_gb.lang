@@ -1,0 +1,5 @@
+entities.RainTools/ShadowLine.placements.name.shadowLine=Shadow Line
+entities.RainTools/ShadowRectangle.placements.name.shadowRect=Shadow Rectangle
+
+entities.RainTools/ColorgradeTimeController.placements.name.controller=Time Controller (Colorgrade)
+entities.RainTools/StylegroundTimeController.placements.name.controller=Time Controller (Styleground)
