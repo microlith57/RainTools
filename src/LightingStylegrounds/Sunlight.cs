@@ -34,7 +34,7 @@ namespace Celeste.Mod.RainTools {
         }
 
         public override void BeforeRenderLighting(Scene scene) {
-            var light = Calc.Rotate(Vector2.UnitX, RainToolsModule.Session.SunAngle);
+            var light = Calc.Rotate(Vector2.UnitX, Angle);
             if (state == null) {
                 var shadows = scene.Tracker.GetEntitiesCopy<ShadowCaster>().ConvertAll((e) => e as ShadowCaster);
                 state = new(light, shadows);
