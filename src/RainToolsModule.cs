@@ -24,11 +24,13 @@ namespace Celeste.Mod.RainTools {
         public override void Load() {
             GlobalEntityAttribute.Load();
             LightingStyleground.Load();
+            AltColorgrade.Load();
         }
 
         public override void Unload() {
             GlobalEntityAttribute.Unload();
             LightingStyleground.Unload();
+            AltColorgrade.Unload();
         }
     }
 }

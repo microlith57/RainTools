@@ -10,7 +10,7 @@ lightFade.fieldInformation = {
   }
 }
 lightFade.placements = {
-  name = "lighting_blur_fade",
+  name = "trigger",
   data = {
     positionMode = "NoEffect",
     blur1From = 1,

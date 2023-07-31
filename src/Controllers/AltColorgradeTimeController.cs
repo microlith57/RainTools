@@ -6,20 +6,31 @@ using System.Linq;
 namespace Celeste.Mod.RainTools {
     [Tracked(true)]
     [GlobalEntity]
-    [CustomEntity("RainTools/ColorgradeTimeController")]
-    public class ColorgradeTimeController : Entity {
+    [CustomEntity("RainTools/AltColorgradeTimeController")]
+    public class AltColorgradeTimeController : Entity {
         public CircularColorgradeLerper Colorgrades;
+        public CircularFloatLerper Alphas;
+
+        public string GroupTag;
+        public float Alpha;
+
+        private AltColorgrade.Controller controller;
 
         private EntityData _data;
         private Vector2 _offset;
 
-        public ColorgradeTimeController() : base() {
+        public AltColorgradeTimeController(string tag) : base() {
             Tag |= Tags.Global | Tags.TransitionUpdate | Tags.FrozenUpdate;
 
+            GroupTag = tag;
             Colorgrades = new();
+            Alphas = new();
+
+            Add(controller = new());
+            controller.Tag = GroupTag;
         }
 
-        public ColorgradeTimeController(EntityData data, Vector2 offset) : this() {
+        public AltColorgradeTimeController(EntityData data, Vector2 offset) : this(data.Attr("tag")) {
             _data = data;
             _offset = offset;
         }
@@ -27,8 +38,9 @@ namespace Celeste.Mod.RainTools {
         public override void Added(Scene scene) {
             base.Added(scene);
 
-            var existing = scene.Tracker.GetEntities<ColorgradeTimeController>()
-                                        .Cast<ColorgradeTimeController>();
+            var existing = scene.Tracker.GetEntities<AltColorgradeTimeController>()
+                                        .Cast<AltColorgradeTimeController>()
+                                        .Where((c) => c.GroupTag == GroupTag);
 
             if (existing.Any((c) => c != this)) {
                 existing.First().AddStop(_data, _offset);
@@ -46,19 +58,21 @@ namespace Celeste.Mod.RainTools {
             var angle = (nodePos - pos).Angle();
 
             Colorgrades.Stops[angle] = data.Attr("colorgrade", "none");
+            Alphas.Stops[angle] = data.Float("alpha", 1f);
         }
 
         public override void Update() {
             base.Update();
 
-            Level level = Scene as Level;
-
             float sunAngle = RainToolsModule.Session.SunAngle;
-            var blend = Colorgrades.Get(sunAngle);
 
-            level.lastColorGrade = blend.a;
-            level.Session.ColorGrade = blend.b;
-            level.colorGradeEase = blend.fac;
+            var blend = Colorgrades.Get(sunAngle);
+            var alpha = Alphas.Get(sunAngle);
+
+            controller.ColorgradeA = blend.a;
+            controller.ColorgradeB = blend.b;
+            controller.LerpFactor = blend.fac;
+            controller.Alpha = alpha;
         }
     }
 }
