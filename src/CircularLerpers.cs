@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Celeste.Mod.RainTools {
     public abstract class CircularLerper<T, T_out> {
-        public SortedDictionary<float, T> Stops;
+        public List<KeyValuePair<float, T>> Stops;
         public bool Any => Stops.Count > 0;
 
         public CircularLerper() {
@@ -19,11 +19,11 @@ namespace Celeste.Mod.RainTools {
         }
 
         public void Add(KeyValuePair<float, T> kvp) {
-            Add(kvp.Key, kvp.Value);
+            Stops.AddSorted(kvp, new KVPComparer<float, T>());
         }
 
         public virtual void Add(float angleRadians, T stop) {
-            Stops[angleRadians] = stop;
+            Add(new(Calc.WrapAngle(angleRadians), stop));
         }
 
         public abstract T_out Convert(T val);
@@ -35,10 +35,18 @@ namespace Celeste.Mod.RainTools {
             } else if (Stops.Count == 1) {
                 return Convert(Stops.First().Value);
             } else {
-                var ordered = Stops.OrderBy((kvp) => PosAngleDiff(kvp.Key, angleRadians));
+                int next_index = Stops.BinarySearch(new(angleRadians, default), new KVPComparer<float, T>());
+                if (next_index < 0)
+                    next_index = ~next_index;
+                if (next_index >= Stops.Count)
+                    next_index = 0;
 
-                var a = ordered.First();
-                var b = ordered.Last();
+                int prev_index = next_index - 1;
+                if (prev_index < 0)
+                    prev_index = Stops.Count - 1;
+
+                var a = Stops[prev_index];
+                var b = Stops[next_index];
 
                 float dist_a = Calc.AbsAngleDiff(a.Key, angleRadians);
                 float dist_b = Calc.AbsAngleDiff(b.Key, angleRadians);
@@ -53,13 +61,6 @@ namespace Celeste.Mod.RainTools {
                 throw new ArgumentOutOfRangeException();
 
             return GetOrDefault(angleRadians);
-        }
-
-        private float PosAngleDiff(float a, float b) {
-            float val = Calc.AngleDiff(a, b);
-            if (val < 0)
-                val += 2f * (float) Math.PI;
-            return val;
         }
     }
 
