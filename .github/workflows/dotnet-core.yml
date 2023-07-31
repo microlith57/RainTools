@@ -40,3 +40,4 @@ jobs:
           everest.yaml
           bin/RainTools.dll
           Loenn
+          Graphics
