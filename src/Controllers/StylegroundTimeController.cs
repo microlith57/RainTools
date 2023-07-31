@@ -8,7 +8,7 @@ namespace Celeste.Mod.RainTools {
     [GlobalEntity]
     [CustomEntity("RainTools/StylegroundTimeController")]
     public class StylegroundTimeController : Entity {
-        public string StylegroundTag;
+        public string SearchTag;
         public CircularColorLerper Colors;
         public CircularFloatLerper Alphas;
 
@@ -18,7 +18,7 @@ namespace Celeste.Mod.RainTools {
         public StylegroundTimeController(string tag) : base() {
             Tag |= Tags.Global | Tags.TransitionUpdate | Tags.FrozenUpdate;
 
-            StylegroundTag = tag;
+            SearchTag = tag;
             Colors = new();
             Alphas = new();
         }
@@ -33,7 +33,7 @@ namespace Celeste.Mod.RainTools {
 
             var existing = scene.Tracker.GetEntities<StylegroundTimeController>()
                                         .Cast<StylegroundTimeController>()
-                                        .Where((c) => c.StylegroundTag == StylegroundTag);
+                                        .Where((c) => c.SearchTag == SearchTag);
 
             if (existing.Any((c) => c != this)) {
                 existing.First().AddStop(_data, _offset);
@@ -50,11 +50,19 @@ namespace Celeste.Mod.RainTools {
             Vector2 nodePos = data.NodesOffset(offset)[0];
             var angle = (nodePos - pos).Angle();
 
-            if (data.Attr("color").Length > 0)
-                Colors.Stops[angle] = Calc.HexToColorWithAlpha(data.Attr("color"));
+            var change = data.Enum<ColorAlphaChangeMode>("mode", ColorAlphaChangeMode.Both);
 
-            if (data.Float("alpha", -1) >= 0)
+            if (change != ColorAlphaChangeMode.AlphaOnly
+                && data.Attr("color").Length > 0) {
+
+                Colors.Stops[angle] = Calc.HexToColorWithAlpha(data.Attr("color"));
+            }
+
+            if (change != ColorAlphaChangeMode.ColorOnly
+                && data.Float("alpha", -1) >= 0) {
+
                 Alphas.Stops[angle] = data.Float("alpha");
+            }
         }
 
         public override void Update() {
@@ -62,21 +70,25 @@ namespace Celeste.Mod.RainTools {
 
             float sunAngle = RainToolsModule.Session.SunAngle;
             Color color = Colors.GetOrDefault(sunAngle);
+            float alpha = Alphas.GetOrDefault(sunAngle);
 
-            if (Alphas.Any) {
-                color *= Alphas.GetOrDefault(sunAngle);
+            bool changeColor = Colors.Any;
+            bool changeAlpha = Alphas.Any;
 
-                foreach (var bg in (Scene as Level).Background.GetEach<Backdrop>(StylegroundTag))
-                    bg.Color = color;
-
-                foreach (var fg in (Scene as Level).Foreground.GetEach<Backdrop>(StylegroundTag))
+            var fgs = (Scene as Level).Foreground.GetEach<Backdrop>(SearchTag);
+            foreach (var fg in fgs) {
+                if (changeColor)
                     fg.Color = color;
-            } else {
-                foreach (var bg in (Scene as Level).Background.GetEach<Backdrop>(StylegroundTag))
-                    bg.Color = color * (bg.Color.A / 255f);
+                if (changeAlpha)
+                    fg.FadeAlphaMultiplier = alpha;
+            }
 
-                foreach (var fg in (Scene as Level).Foreground.GetEach<Backdrop>(StylegroundTag))
-                    fg.Color = color * (fg.Color.A / 255f);
+            var bgs = (Scene as Level).Background.GetEach<Backdrop>(SearchTag);
+            foreach (var bg in bgs) {
+                if (changeColor)
+                    bg.Color = color;
+                if (changeAlpha)
+                    bg.FadeAlphaMultiplier = alpha;
             }
         }
     }

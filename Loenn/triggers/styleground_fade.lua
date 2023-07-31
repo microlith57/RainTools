@@ -2,30 +2,32 @@ local enums = require("consts.celeste_enums")
 
 local lightFade = {}
 
-lightFade.name = "RainTools/LightingColorFade"
+lightFade.name = "RainTools/StylegroundFade"
 lightFade.fieldInformation = {
   positionMode = {
     options = enums.trigger_position_modes,
     editable = false
   },
-  colorFrom = {
-    fieldType = "color"
+  mode = {
+    options = {"ColorOnly", "AlphaOnly", "Both"},
+    editable = false
   },
-  colorTo = {
-    fieldType = "color"
-  }
+  colorFrom = {fieldType = "color"},
+  colorTo = {fieldType = "color"}
 }
 lightFade.placements = {
   name = "trigger",
   data = {
     positionMode = "NoEffect",
+    mode = "Both",
     alphaFrom = 1,
     alphaTo = 1,
     colorFrom = "ffffff",
     colorTo = "ffffff",
-    colorOnly = false,
-    tag = "sun"
+    tag = ""
   }
 }
+
+-- todo extended trigger text
 
 return lightFade

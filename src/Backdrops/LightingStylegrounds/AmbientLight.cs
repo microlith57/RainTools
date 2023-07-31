@@ -1,6 +1,3 @@
-using System;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Celeste.Mod.Backdrops;
 using Monocle;
 
@@ -13,7 +10,7 @@ namespace Celeste.Mod.RainTools {
         }
 
         public override void RenderLighting(Scene scene) {
-            Draw.Rect(0, 0, 320, 180, Color);
+            Draw.Rect(0, 0, 320, 180, Color * FadeAlphaMultiplier);
         }
     }
 }

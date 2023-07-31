@@ -11,10 +11,8 @@ namespace Celeste.Mod.RainTools {
         public CircularColorgradeLerper Colorgrades;
         public CircularFloatLerper Alphas;
 
-        public string GroupTag;
+        public string SearchTag;
         public float Alpha;
-
-        private AltColorgrade.Controller controller;
 
         private EntityData _data;
         private Vector2 _offset;
@@ -22,12 +20,9 @@ namespace Celeste.Mod.RainTools {
         public AltColorgradeTimeController(string tag) : base() {
             Tag |= Tags.Global | Tags.TransitionUpdate | Tags.FrozenUpdate;
 
-            GroupTag = tag;
+            SearchTag = tag;
             Colorgrades = new();
             Alphas = new();
-
-            Add(controller = new());
-            controller.Tag = GroupTag;
         }
 
         public AltColorgradeTimeController(EntityData data, Vector2 offset) : this(data.Attr("tag")) {
@@ -40,7 +35,7 @@ namespace Celeste.Mod.RainTools {
 
             var existing = scene.Tracker.GetEntities<AltColorgradeTimeController>()
                                         .Cast<AltColorgradeTimeController>()
-                                        .Where((c) => c.GroupTag == GroupTag);
+                                        .Where((c) => c.SearchTag == SearchTag);
 
             if (existing.Any((c) => c != this)) {
                 existing.First().AddStop(_data, _offset);
@@ -57,8 +52,11 @@ namespace Celeste.Mod.RainTools {
             Vector2 nodePos = data.NodesOffset(offset)[0];
             var angle = (nodePos - pos).Angle();
 
-            Colorgrades.Stops[angle] = data.Attr("colorgrade", "none");
-            Alphas.Stops[angle] = data.Float("alpha", 1f);
+            if (data.Attr("colorgrade") != "")
+                Colorgrades.Stops[angle] = data.Attr("colorgrade", "none");
+
+            if (data.Float("alpha", -1f) >= 0)
+                Alphas.Stops[angle] = data.Float("alpha", 1f);
         }
 
         public override void Update() {
@@ -66,13 +64,21 @@ namespace Celeste.Mod.RainTools {
 
             float sunAngle = RainToolsModule.Session.SunAngle;
 
-            var blend = Colorgrades.Get(sunAngle);
-            var alpha = Alphas.Get(sunAngle);
+            var bgs = (Scene as Level).Foreground.GetEach<AltColorgrade>(SearchTag)
+                                                 .Cast<AltColorgrade>();
 
-            controller.ColorgradeA = blend.a;
-            controller.ColorgradeB = blend.b;
-            controller.LerpFactor = blend.fac;
-            controller.Alpha = alpha;
+            var blend = Colorgrades.GetOrDefault(sunAngle);
+            var alpha = Alphas.GetOrDefault(sunAngle);
+
+            foreach (var bg in bgs) {
+                if (Colorgrades.Any) {
+                    bg.ColorgradeA = blend.a;
+                    bg.ColorgradeB = blend.b;
+                    bg.LerpFactor = blend.fac;
+                }
+                if (Alphas.Any)
+                    bg.Alpha = alpha;
+            }
         }
     }
 }

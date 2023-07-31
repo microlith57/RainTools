@@ -78,7 +78,7 @@ namespace Celeste.Mod.RainTools {
         public override void RenderLighting(Scene scene) {
             if (target == null || target.IsDisposed)
                 return;
-            Draw.SpriteBatch.Draw(target, Vector2.Zero, target.Bounds, Color, 0f, Vector2.Zero, DOWNRES_FACTOR, SpriteEffects.None, 0f);
+            Draw.SpriteBatch.Draw(target, Vector2.Zero, target.Bounds, Color * FadeAlphaMultiplier, 0f, Vector2.Zero, DOWNRES_FACTOR, SpriteEffects.None, 0f);
         }
     }
 }

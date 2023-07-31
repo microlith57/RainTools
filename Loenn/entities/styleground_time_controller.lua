@@ -11,21 +11,30 @@ styleground_time_controller.nodeVisibility = "always"
 styleground_time_controller.placements = {
   name = "controller",
   data = {
-    tag = "sun",
+    tag = "",
     color = "ffffff",
-    alpha = 1.0
+    alpha = 1.0,
+    mode = "Both"
+    -- clockwiseEaseNext = "Linear"
   }
 }
 styleground_time_controller.fieldInformation = {
-  color = {
-    fieldType = "color"
-  }
+  mode = {
+    options = {"ColorOnly", "AlphaOnly", "Both"},
+    editable = false
+  },
+  color = {fieldType = "color"}
+  -- clockwiseEaseNext = easings
 }
 
 function styleground_time_controller.sprite(room, entity)
   local baseSprite = drawableSprite.fromTexture("RainTools/time_controller_base", entity)
   local frontSprite = drawableSprite.fromTexture("RainTools/time_controller_styleground", entity)
   baseSprite.color = nil
+
+  if entity.mode == "AlphaOnly" then
+    frontSprite.color = nil
+  end
 
   return {baseSprite, frontSprite}
 end
