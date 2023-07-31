@@ -6,6 +6,5 @@ entities.RainTools/ColorgradeTimeController.placements.name.controller=Time Cont
 entities.RainTools/AltColorgradeTimeController.placements.name.controller=Time Controller (Alt Colorgrade)
 entities.RainTools/StylegroundTimeController.placements.name.controller=Time Controller (Styleground)
 
-triggers.RainTools/AltColorgradeFade.placements.name.trigger=Alt Colorgrade Fade
+triggers.RainTools/StylegroundFade.placements.name.trigger=Styleground Fade
 triggers.RainTools/LightingBlurFade.placements.name.trigger=Lighting Blur Fade
-triggers.RainTools/LightingColorFade.placements.name.trigger=Lighting Color Fade
