@@ -1,32 +1,26 @@
 using Microsoft.Xna.Framework;
 using Monocle;
 using Celeste.Mod.Entities;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using MonoMod.Utils;
 
 namespace Celeste.Mod.RainTools {
     [Tracked(true)]
     [GlobalEntity]
     [CustomEntity("RainTools/StylegroundTimeController")]
     public class StylegroundTimeController : Entity {
-        public struct Keyframe {
-            public Color Color;
-            public float Alpha;
-        }
-
         public string StylegroundTag;
-        public SortedList<float, Keyframe> Keyframes;
+        public CircularColorLerper Colors;
+        public CircularFloatLerper Alphas;
 
         private EntityData _data;
         private Vector2 _offset;
 
         public StylegroundTimeController(string tag) : base() {
-            Tag |= Tags.Persistent | Tags.TransitionUpdate | Tags.FrozenUpdate;
+            Tag |= Tags.Global | Tags.TransitionUpdate | Tags.FrozenUpdate;
 
             StylegroundTag = tag;
-            Keyframes = new();
+            Colors = new();
+            Alphas = new();
         }
 
         public StylegroundTimeController(EntityData data, Vector2 offset) : this(data.Attr("tag")) {
@@ -56,54 +50,33 @@ namespace Celeste.Mod.RainTools {
             Vector2 nodePos = data.NodesOffset(offset)[0];
             var angle = (nodePos - pos).Angle();
 
-            Keyframe kf = new();
+            if (data.Attr("color").Length > 0)
+                Colors.Stops[angle] = Calc.HexToColorWithAlpha(data.Attr("color"));
 
-            kf.Color = Calc.HexToColorWithAlpha(data.Attr("color"));
-            kf.Alpha = data.Float("alpha", 1);
-
-            Keyframes.Add(angle, kf);
+            if (data.Float("alpha", -1) >= 0)
+                Alphas.Stops[angle] = data.Float("alpha");
         }
 
         public override void Update() {
             base.Update();
 
             float sunAngle = RainToolsModule.Session.SunAngle;
+            Color color = Colors.GetOrDefault(sunAngle);
 
-            Color color;
-            float alpha;
+            if (Alphas.Any) {
+                color *= Alphas.GetOrDefault(sunAngle);
 
-            switch (Keyframes.Count()) {
-                case 0:
-                    throw new NotImplementedException("unreachable code reached!");
-                case 1:
-                    var kvp = Keyframes.First();
-                    color = kvp.Value.Color;
-                    alpha = kvp.Value.Alpha;
-                    break;
-                default:
-                    var closest = Keyframes.OrderBy((kvp) => Calc.AbsAngleDiff(kvp.Key, sunAngle));
+                foreach (var bg in (Scene as Level).Background.GetEach<Backdrop>(StylegroundTag))
+                    bg.Color = color;
 
-                    var a = closest.ElementAt(0);
-                    var b = closest.ElementAt(1);
+                foreach (var fg in (Scene as Level).Foreground.GetEach<Backdrop>(StylegroundTag))
+                    fg.Color = color;
+            } else {
+                foreach (var bg in (Scene as Level).Background.GetEach<Backdrop>(StylegroundTag))
+                    bg.Color = color * (bg.Color.A / 255f);
 
-                    float dist_a_sun = Calc.AbsAngleDiff(a.Key, sunAngle);
-                    float dist_b_sun = Calc.AbsAngleDiff(b.Key, sunAngle);
-                    float fac = Calc.Clamp((dist_a_sun) / (dist_a_sun + dist_b_sun), 0f, 1f);
-
-                    color = Color.Lerp(a.Value.Color, b.Value.Color, fac);
-                    alpha = MathHelper.Lerp(a.Value.Alpha, b.Value.Alpha, fac);
-
-                    break;
-            }
-
-            foreach (var bg in (Scene as Level).Background.GetEach<Backdrop>(StylegroundTag)) {
-                bg.Color = color;
-                DynamicData.For(bg).Set("Alpha", alpha);
-            }
-
-            foreach (var fg in (Scene as Level).Foreground.GetEach<Backdrop>(StylegroundTag)) {
-                fg.Color = color;
-                DynamicData.For(fg).Set("Alpha", alpha);
+                foreach (var fg in (Scene as Level).Foreground.GetEach<Backdrop>(StylegroundTag))
+                    fg.Color = color * (fg.Color.A / 255f);
             }
         }
     }

@@ -10,6 +10,7 @@ sunlight_angle_time_controller.placements = {
   name = "controller",
   data = {
     tag = "sun",
+    seconds_per_cycle = 0.0,
   }
 }
 
