@@ -53,10 +53,10 @@ namespace Celeste.Mod.RainTools {
             var angle = (nodePos - pos).Angle();
 
             if (data.Attr("colorgrade") != "")
-                Colorgrades.Stops[angle] = data.Attr("colorgrade", "none");
+                Colorgrades.Add(angle, data.Attr("colorgrade", "none"));
 
             if (data.Float("alpha", -1f) >= 0)
-                Alphas.Stops[angle] = data.Float("alpha", 1f);
+                Alphas.Add(angle, data.Float("alpha", 1f));
         }
 
         public override void Update() {

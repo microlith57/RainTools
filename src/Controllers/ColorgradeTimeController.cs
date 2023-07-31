@@ -45,7 +45,7 @@ namespace Celeste.Mod.RainTools {
             Vector2 nodePos = data.NodesOffset(offset)[0];
             var angle = (nodePos - pos).Angle();
 
-            Colorgrades.Stops[angle] = data.Attr("colorgrade", "none");
+            Colorgrades.Add(angle, data.Attr("colorgrade", "none"));
         }
 
         public override void Update() {
