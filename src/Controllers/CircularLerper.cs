@@ -113,6 +113,7 @@ namespace Celeste.Mod.RainTools {
 
             if (stop.Length != Length)
                 throw new ArgumentException("gradient stop is of incorrect length for this gradient");
+
             base.Add(angleRadians, stop);
         }
 
