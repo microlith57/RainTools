@@ -8,7 +8,7 @@ namespace Celeste.Mod.RainTools {
     [GlobalEntity]
     [CustomEntity("RainTools/ColorgradeTimeController")]
     public class ColorgradeTimeController : Entity {
-        public CircularColorgradeLerper Colorgrades;
+        public CircularColorgradeInterpolator Colorgrades;
 
         private EntityData _data;
         private Vector2 _offset;

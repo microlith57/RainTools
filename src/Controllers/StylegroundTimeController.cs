@@ -9,8 +9,8 @@ namespace Celeste.Mod.RainTools {
     [CustomEntity("RainTools/StylegroundTimeController")]
     public class StylegroundTimeController : Entity {
         public string SearchTag;
-        public CircularColorLerper Colors;
-        public CircularFloatLerper Alphas;
+        public CircularColorInterpolator Colors;
+        public CircularFloatInterpolator Alphas;
 
         private EntityData _data;
         private Vector2 _offset;

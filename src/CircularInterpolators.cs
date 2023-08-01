@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Celeste.Mod.RainTools {
-    public abstract class CircularLerper<T, T_out> {
+    public abstract class CircularInterpolator<T, T_out> {
         public List<float> StopAngles;
         public List<T> StopValues;
         public List<Ease.Easer> StopEasers;
@@ -13,7 +13,7 @@ namespace Celeste.Mod.RainTools {
         public int Count => StopAngles.Count;
         public bool Any => StopAngles.Count > 0;
 
-        public CircularLerper() {
+        public CircularInterpolator() {
             StopAngles = new();
             StopValues = new();
             StopEasers = new();
@@ -85,25 +85,25 @@ namespace Celeste.Mod.RainTools {
         }
     }
 
-    public abstract class SimpleCircularLerper<T> : CircularLerper<T, T> {
+    public abstract class SimpleCircularInterpolator<T> : CircularInterpolator<T, T> {
         public override T Convert(T val) {
             return val;
         }
     }
 
-    public class CircularFloatLerper : SimpleCircularLerper<float> {
+    public class CircularFloatInterpolator : SimpleCircularInterpolator<float> {
         public override float Lerp(float a, float b, float fac) {
             return MathHelper.Lerp(a, b, fac);
         }
     }
 
-    public class CircularColorLerper : SimpleCircularLerper<Color> {
+    public class CircularColorInterpolator : SimpleCircularInterpolator<Color> {
         public override Color Lerp(Color a, Color b, float fac) {
             return Color.Lerp(a, b, fac);
         }
     }
 
-    public class CircularColorgradeLerper : CircularLerper<string, CircularColorgradeLerper.Blend> {
+    public class CircularColorgradeInterpolator : CircularInterpolator<string, CircularColorgradeInterpolator.Blend> {
         public struct Blend {
             public string a, b;
             public float fac;
@@ -126,7 +126,7 @@ namespace Celeste.Mod.RainTools {
         }
     }
 
-    public class CircularColorGradientLerper : SimpleCircularLerper<Color[]> {
+    public class CircularColorGradientInterpolator : SimpleCircularInterpolator<Color[]> {
         public int Length { get; private set; }
 
         public override void Add(float angleRadians, Color[] stop, Ease.Easer easer) {
