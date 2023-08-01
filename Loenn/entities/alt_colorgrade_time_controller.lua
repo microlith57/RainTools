@@ -1,3 +1,4 @@
+local mods = require("mods")
 local utils = require("utils")
 local drawableSprite = require("structs.drawable_sprite")
 local drawableLine = require("structs.drawable_line")
@@ -11,10 +12,27 @@ alt_colorgrade_time_controller.nodeVisibility = "always"
 alt_colorgrade_time_controller.placements = {
   name = "controller",
   data = {
-    colorgrade = "none",
     tag = "",
     depth = 0,
-    alpha = 1
+    colorgrade = "none",
+    alpha = 1,
+    colorgradeEase = "Linear",
+    alphaEase = "Linear",
+    mode = "Both"
+  }
+}
+alt_colorgrade_time_controller.fieldInformation = {
+  mode = {
+    options = {"ColorgradeOnly", "AlphaOnly", "Both"},
+    editable = false
+  },
+  colorgradeEase = {
+    options = easings,
+    editable = true
+  },
+  alphaEase = {
+    options = easings,
+    editable = true
   }
 }
 

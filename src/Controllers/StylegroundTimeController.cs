@@ -55,13 +55,13 @@ namespace Celeste.Mod.RainTools {
             if (change != ColorAlphaChangeMode.AlphaOnly
                 && data.Attr("color").Length > 0) {
 
-                Colors.Add(angle, Calc.HexToColorWithAlpha(data.Attr("color")));
+                Colors.Add(angle, Calc.HexToColorWithAlpha(data.Attr("color")), data.Attr("colorEase"));
             }
 
             if (change != ColorAlphaChangeMode.ColorOnly
                 && data.Float("alpha", -1) >= 0) {
 
-                Alphas.Add(angle, data.Float("alpha"));
+                Alphas.Add(angle, data.Float("alpha"), data.Attr("alphaEase"));
             }
         }
 

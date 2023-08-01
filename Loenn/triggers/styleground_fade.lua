@@ -1,8 +1,25 @@
+local mods = require("mods")
 local enums = require("consts.celeste_enums")
+
+local easings = mods.requireFromPlugin("libraries.easings")
 
 local lightFade = {}
 
 lightFade.name = "RainTools/StylegroundFade"
+lightFade.placements = {
+  name = "trigger",
+  data = {
+    positionMode = "NoEffect",
+    tag = "",
+    colorFrom = "ffffff",
+    colorTo = "ffffff",
+    alphaFrom = 1,
+    alphaTo = 1,
+    colorEase = "Linear",
+    alphaEase = "Linear",
+    mode = "Both"
+  }
+}
 lightFade.fieldInformation = {
   positionMode = {
     options = enums.trigger_position_modes,
@@ -13,18 +30,14 @@ lightFade.fieldInformation = {
     editable = false
   },
   colorFrom = {fieldType = "color"},
-  colorTo = {fieldType = "color"}
-}
-lightFade.placements = {
-  name = "trigger",
-  data = {
-    positionMode = "NoEffect",
-    mode = "Both",
-    alphaFrom = 1,
-    alphaTo = 1,
-    colorFrom = "ffffff",
-    colorTo = "ffffff",
-    tag = ""
+  colorTo = {fieldType = "color"},
+  colorEase = {
+    options = easings,
+    editable = true
+  },
+  alphaEase = {
+    options = easings,
+    editable = true
   }
 }
 

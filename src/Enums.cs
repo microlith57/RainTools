@@ -4,4 +4,10 @@ namespace Celeste.Mod.RainTools {
         AlphaOnly,
         Both
     }
+
+    public enum ColorgradeAlphaChangeMode {
+        ColorgradeOnly,
+        AlphaOnly,
+        Both
+    }
 }

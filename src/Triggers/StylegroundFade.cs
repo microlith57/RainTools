@@ -6,33 +6,39 @@ namespace Celeste.Mod.RainTools {
     [CustomEntity("RainTools/StylegroundFade")]
     public class StylegroundFadeTrigger : Trigger {
         public Color ColorFrom, ColorTo;
-        public bool ChangeColor = false;
+        public Ease.Easer ColorEase = Ease.Linear;
 
         public float AlphaFrom, AlphaTo;
-        public bool ChangeAlpha = false;
+        public Ease.Easer AlphaEase = Ease.Linear;
+
+        public ColorAlphaChangeMode ChangeMode;
 
         public PositionModes mode;
         public string SearchTag;
 
         public StylegroundFadeTrigger(EntityData data, Vector2 offset) : base(data, offset) {
-            var change = data.Enum<ColorAlphaChangeMode>("mode", ColorAlphaChangeMode.Both);
+            ChangeMode = data.Enum<ColorAlphaChangeMode>("mode", ColorAlphaChangeMode.Both);
 
-            if (change != ColorAlphaChangeMode.AlphaOnly
+            if (ChangeMode != ColorAlphaChangeMode.AlphaOnly
                 && data.Attr("colorFrom") != ""
                 && data.Attr("colorTo") != "") {
 
                 ColorFrom = Calc.HexToColorWithAlpha(data.Attr("colorFrom"));
                 ColorTo = Calc.HexToColorWithAlpha(data.Attr("colorTo"));
-                ChangeColor = true;
+
+                if (data.Attr("colorEase") != "")
+                    ColorEase = FrostHelper.EaseHelper.GetEase(data.Attr("colorEase"));
             }
 
-            if (change != ColorAlphaChangeMode.ColorOnly
+            if (ChangeMode != ColorAlphaChangeMode.ColorOnly
                 && data.Float("alphaFrom", -1f) >= 0f
                 && data.Float("alphaTo", -1f) >= 0f) {
 
                 AlphaFrom = data.Float("alphaFrom");
                 AlphaTo = data.Float("alphaTo");
-                ChangeAlpha = true;
+
+                if (data.Attr("alphaEase") != "")
+                    AlphaEase = FrostHelper.EaseHelper.GetEase(data.Attr("alphaEase"));
             }
 
             mode = data.Enum<PositionModes>("positionMode");
@@ -47,17 +53,17 @@ namespace Celeste.Mod.RainTools {
 
             var fgs = (Scene as Level).Foreground.GetEach<Backdrop>(SearchTag);
             foreach (var fg in fgs) {
-                if (ChangeColor)
+                if (ChangeMode != ColorAlphaChangeMode.AlphaOnly)
                     fg.Color = color;
-                if (ChangeAlpha)
+                if (ChangeMode != ColorAlphaChangeMode.ColorOnly)
                     fg.FadeAlphaMultiplier = alpha;
             }
 
             var bgs = (Scene as Level).Background.GetEach<Backdrop>(SearchTag);
             foreach (var bg in bgs) {
-                if (ChangeColor)
+                if (ChangeMode != ColorAlphaChangeMode.AlphaOnly)
                     bg.Color = color;
-                if (ChangeAlpha)
+                if (ChangeMode != ColorAlphaChangeMode.ColorOnly)
                     bg.FadeAlphaMultiplier = alpha;
             }
         }

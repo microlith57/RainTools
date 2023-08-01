@@ -1,6 +1,9 @@
+local mods = require("mods")
 local utils = require("utils")
 local drawableSprite = require("structs.drawable_sprite")
 local drawableLine = require("structs.drawable_line")
+
+local easings = mods.requireFromPlugin("libraries.easings")
 
 local styleground_time_controller = {}
 
@@ -14,8 +17,9 @@ styleground_time_controller.placements = {
     tag = "",
     color = "ffffff",
     alpha = 1.0,
+    colorEase = "Linear",
+    alphaEase = "Linear",
     mode = "Both"
-    -- clockwiseEaseNext = "Linear"
   }
 }
 styleground_time_controller.fieldInformation = {
@@ -23,8 +27,15 @@ styleground_time_controller.fieldInformation = {
     options = {"ColorOnly", "AlphaOnly", "Both"},
     editable = false
   },
-  color = {fieldType = "color"}
-  -- clockwiseEaseNext = easings
+  color = {fieldType = "color"},
+  colorEase = {
+    options = easings,
+    editable = true
+  },
+  alphaEase = {
+    options = easings,
+    editable = true
+  }
 }
 
 function styleground_time_controller.sprite(room, entity)

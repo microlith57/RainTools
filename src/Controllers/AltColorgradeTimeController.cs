@@ -52,11 +52,19 @@ namespace Celeste.Mod.RainTools {
             Vector2 nodePos = data.NodesOffset(offset)[0];
             var angle = (nodePos - pos).Angle();
 
-            if (data.Attr("colorgrade") != "")
-                Colorgrades.Add(angle, data.Attr("colorgrade", "none"));
+            var change = data.Enum<ColorgradeAlphaChangeMode>("mode", ColorgradeAlphaChangeMode.Both);
 
-            if (data.Float("alpha", -1f) >= 0)
-                Alphas.Add(angle, data.Float("alpha", 1f));
+            if (change != ColorgradeAlphaChangeMode.AlphaOnly
+                && data.Attr("colorgrade") != "") {
+
+                Colorgrades.Add(angle, data.Attr("colorgrade", "none"), data.Attr("colorgradeEase"));
+            }
+
+            if (change != ColorgradeAlphaChangeMode.ColorgradeOnly
+                && data.Float("alpha", -1f) >= 0) {
+
+                Alphas.Add(angle, data.Float("alpha", 1f), data.Attr("alphaEase"));
+            }
         }
 
         public override void Update() {

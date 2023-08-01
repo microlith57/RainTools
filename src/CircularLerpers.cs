@@ -42,8 +42,10 @@ namespace Celeste.Mod.RainTools {
             StopEasers.Insert(index, ease);
         }
 
-        public void Add(float angleRadians, T stop) {
-            Add(angleRadians, stop, Ease.Linear);
+        public void Add(float angleRadians, T stop, string easerName = "") {
+            var ease = easerName == "" ? Ease.Linear : FrostHelper.EaseHelper.GetEase(easerName, Ease.Linear);
+
+            Add(angleRadians, stop, ease);
         }
 
         public abstract T_out Convert(T val);
