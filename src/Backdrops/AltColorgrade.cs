@@ -54,11 +54,12 @@ namespace Celeste.Mod.RainTools {
         private static void modLevelRender(ILContext context) {
             var cursor = new ILCursor(context);
 
-            cursor.GotoNext(MoveType.AfterLabel,
-                            i => i.MatchCallOrCallvirt<Engine>("get_Instance"),
-                            i => i.MatchCallOrCallvirt<Game>("get_GraphicsDevice"),
+            cursor.GotoNext(MoveType.Before,
                             i => i.MatchLdnull(),
                             i => i.MatchCallOrCallvirt<GraphicsDevice>("SetRenderTarget"));
+            cursor.GotoPrev(MoveType.AfterLabel,
+                            i => i.MatchCallOrCallvirt<Engine>("get_Instance"),
+                            i => i.MatchCallOrCallvirt<Game>("get_GraphicsDevice"));
 
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.EmitDelegate(renderAll);
