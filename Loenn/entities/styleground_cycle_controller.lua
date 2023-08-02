@@ -49,13 +49,19 @@ styleground_cycle_controller.fieldOrder = {
 function styleground_cycle_controller.sprite(room, entity)
   local baseSprite = drawableSprite.fromTexture("RainTools/cycle_controller_base", entity)
   local frontSprite = drawableSprite.fromTexture("RainTools/cycle_controller_styleground", entity)
+  local errorSprite
   baseSprite.color = nil
 
   if entity.mode == "AlphaOnly" then
     frontSprite.color = nil
   end
 
-  return {baseSprite, frontSprite}
+  if ((entity.cycleTag or "") == "") or ((entity.styleTag or "") == "") then
+    errorSprite = drawableSprite.fromTexture("RainTools/empty_controller", entity)
+    errorSprite.color = {1, 0, 0, 1}
+  end
+
+  return {baseSprite, frontSprite, errorSprite}
 end
 
 function styleground_cycle_controller.nodeSprite(room, entity, node, index)

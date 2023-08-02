@@ -34,8 +34,14 @@ colorgrade_cycle_controller.fieldOrder = {
 function colorgrade_cycle_controller.sprite(room, entity)
   local baseSprite = drawableSprite.fromTexture("RainTools/cycle_controller_base", entity)
   local frontSprite = drawableSprite.fromTexture("RainTools/cycle_controller_colorgrade", entity)
+  local errorSprite
 
-  return {baseSprite, frontSprite}
+  if (entity.cycleTag or "") == "" then
+    errorSprite = drawableSprite.fromTexture("RainTools/empty_controller", entity)
+    errorSprite.color = {1, 0, 0, 1}
+  end
+
+  return {baseSprite, frontSprite, errorSprite}
 end
 
 function colorgrade_cycle_controller.nodeSprite(room, entity, node, index)

@@ -5,8 +5,7 @@ local drawableLine = require("structs.drawable_line")
 local cycle_controller = {}
 
 cycle_controller.name = "RainTools/CycleController"
-cycle_controller.texture = "RainTools/cycle_controller"
-cycle_controller.depth = 0
+cycle_controller.depth = -1
 cycle_controller.placements = {
   name = "controller",
   data = {
@@ -26,5 +25,17 @@ cycle_controller.fieldOrder = {
   "transitionUpdate", "frozenUpdate", -- "pauseUpdate",
   "flag"
 }
+
+function cycle_controller.sprite(room, entity)
+  local baseSprite = drawableSprite.fromTexture("RainTools/cycle_controller", entity)
+  local errorSprite
+
+  if (entity.cycleTag or "") == "" then
+    errorSprite = drawableSprite.fromTexture("RainTools/empty_controller", entity)
+    errorSprite.color = {1, 0, 0, 1}
+  end
+
+  return {baseSprite, errorSprite}
+end
 
 return cycle_controller
