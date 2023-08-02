@@ -11,14 +11,19 @@ sunlight_angle_cycle_controller.placements = {
   data = {
     cycleTag = "",
     styleTag = "",
-    angleOffset = 0,
-    angleMultiplier = 1
+    angleMultiplier = 1,
+    angleOffset = 0
+  }
+}
+sunlight_angle_cycle_controller.fieldInformation = {
+  angleMultiplier = {
+    fieldType = "integer"
   }
 }
 sunlight_angle_cycle_controller.fieldOrder = {
   "x", "y",
   "cycleTag", "styleTag",
-  "angleOffset", "angleMultiplier"
+  "angleMultiplier", "angleOffset"
 }
 
 function sunlight_angle_cycle_controller.sprite(room, entity)

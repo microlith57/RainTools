@@ -6,7 +6,7 @@ namespace Celeste.Mod.RainTools {
     public class AmbientLight : LightingStyleground {
         public AmbientLight(BinaryPacker.Element data) {
             UseSpritebatch = true;
-            Color = Calc.HexToColor(data.Attr("lightColor"));
+            Color = Calc.HexToColor(data.Attr("lightColor")) * data.AttrFloat("alpha", 1f);
         }
 
         public override void RenderLighting(Scene scene) {

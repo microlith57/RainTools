@@ -37,6 +37,7 @@ alt_colorgrade_cycle_controller.fieldInformation = {
 }
 alt_colorgrade_cycle_controller.fieldOrder = {
   "x", "y",
+  "cycleTag", "styleTag",
   "colorgrade", "colorgradeEase",
   "alpha", "alphaEase",
   "mode"

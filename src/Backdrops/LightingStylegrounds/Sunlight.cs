@@ -26,7 +26,7 @@ namespace Celeste.Mod.RainTools {
             UseSpritebatch = true;
 
             Angle = data.AttrFloat("angle", (float) Math.PI / 2f);
-            Color = Calc.HexToColor(data.Attr("lightColor", "ffffff"));
+            Color = Calc.HexToColor(data.Attr("lightColor", "ffffff")) * data.AttrFloat("alpha", 1f);
             Blur1 = data.AttrFloat("blur1", 2f);
             Blur2 = data.AttrFloat("blur2", 1f);
 

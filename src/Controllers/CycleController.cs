@@ -25,6 +25,11 @@ namespace Celeste.Mod.RainTools {
             if (data.Bool("pauseUpdate"))
                 Tag |= Tags.PauseUpdate;
 
+            if (Offset != 0)
+                Depth = -2;
+            else
+                Depth = -1;
+
             Flag = data.Attr("flag");
         }
 

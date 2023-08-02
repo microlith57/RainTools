@@ -9,13 +9,13 @@ lightFade.name = "RainTools/StylegroundFade"
 lightFade.placements = {
   name = "trigger",
   data = {
-    positionMode = "NoEffect",
     styleTag = "",
+    positionMode = "NoEffect",
     colorFrom = "ffffff",
     colorTo = "ffffff",
+    colorEase = "Linear",
     alphaFrom = 1,
     alphaTo = 1,
-    colorEase = "Linear",
     alphaEase = "Linear",
     mode = "ColorAndAlpha"
   }

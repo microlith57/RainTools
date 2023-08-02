@@ -1,17 +1,22 @@
-local ambient_light = {}
+local alt_colorgrade = {}
 
-ambient_light.name = "RainTools/AltColorgrade"
-ambient_light.canForeground = true
-ambient_light.canBackground = false
-ambient_light.defaultData = {
+alt_colorgrade.name = "RainTools/AltColorgrade"
+alt_colorgrade.canForeground = true
+alt_colorgrade.canBackground = false
+alt_colorgrade.defaultData = {
   color = "ffffff",
   alpha = 1.0,
   colorgradeA = "none",
   colorgradeB = "none",
   blendFactor = 0.0
 }
-ambient_light.fieldInformation = {
+alt_colorgrade.fieldInformation = {
   color = {fieldType = "color"}
 }
+alt_colorgrade.fieldOrder = {
+  "color", "alpha",
+  "colorgradeA", "colorgradeB",
+  "blendFactor"
+}
 
-return ambient_light
+return alt_colorgrade

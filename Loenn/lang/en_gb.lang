@@ -1,12 +1,101 @@
+# -- shadow casters --
+
+# shadow line
 entities.RainTools/ShadowLine.placements.name.shadowLine=Shadow Line
+entities.RainTools/ShadowLine.attributes.description.offset=How many pixels away from the line the shadow is.
+entities.RainTools/ShadowLine.attributes.description.length=How many pixels long the shadow is.
+entities.RainTools/ShadowLine.attributes.description.letsInLight=If ticked, casts a light instead of a shadow.
+entities.RainTools/ShadowLine.attributes.description.alpha=How opaque the shadow or light should be.
+
+# shadow rectangle
 entities.RainTools/ShadowRectangle.placements.name.shadowRect=Shadow Rectangle
+entities.RainTools/ShadowRectangle.attributes.description.offset=How many pixels away from the rectangle the shadow is.
+entities.RainTools/ShadowRectangle.attributes.description.length=How many pixels long the shadow is.
+entities.RainTools/ShadowRectangle.attributes.description.letsInLight=If ticked, casts a light instead of a shadow.
+entities.RainTools/ShadowRectangle.attributes.description.alpha=How opaque the shadow or light should be.
 
+# -- cycle controllers --
+
+# cycle
 entities.RainTools/CycleController.placements.name.controller=Cycle Controller (Cycle)
-entities.RainTools/SunlightAngleCycleController.placements.name.controller=Cycle Controller (Sunlight Angle)
-entities.RainTools/ColorgradeCycleController.placements.name.controller=Cycle Controller (Colorgrade)
-entities.RainTools/AltColorgradeCycleController.placements.name.controller=Cycle Controller (Alt Colorgrade)
-entities.RainTools/StylegroundCycleController.placements.name.controller=Cycle Controller (Styleground)
-entities.RainTools/FlagCycleController.placements.name.controller=Cycle Controller (Set Flag)
+entities.RainTools/CycleController.attributes.description.cycleTag=Cycle to bind this controller to.
+entities.RainTools/CycleController.attributes.description.progressionOffset=Progression to add for the first cycle.
+entities.RainTools/CycleController.attributes.description.transitionUpdate=Whether to progress the cycle during transitions.
+entities.RainTools/CycleController.attributes.description.frozenUpdate=Whether to progress the cycle during freezeframes.
 
+# sunlight
+entities.RainTools/SunlightAngleCycleController.placements.name.controller=Cycle Controller (Sunlight Angle)
+entities.RainTools/SunlightAngleCycleController.attributes.description.cycleTag=Cycle to bind this controller to.
+entities.RainTools/SunlightAngleCycleController.attributes.description.styleTag=Styleground tag for the Sunlight effects to modify.
+entities.RainTools/SunlightAngleCycleController.attributes.description.angleMultiplier=Number of times the light should rotate each cycle.
+entities.RainTools/SunlightAngleCycleController.attributes.description.angleOffset=Angle of the light at the beginning of a cycle.
+
+# colorgrade
+entities.RainTools/ColorgradeCycleController.placements.name.controller=Cycle Controller (Colorgrade)
+entities.RainTools/ColorgradeCycleController.attributes.description.cycleTag=Cycle to bind this controller to.
+entities.RainTools/ColorgradeCycleController.attributes.description.colorgrade=Colorgrade at this point in the cycle.
+entities.RainTools/ColorgradeCycleController.attributes.description.colorgradeEase=Ease function to use for the colorgrade between this stop and the next.
+entities.RainTools/ColorgradeCycleController.attributes.description.flag=If set, only change anything if the flag is set. Should be the same for all controllers of this type and cycle.
+
+# alt colorgrade
+entities.RainTools/AltColorgradeCycleController.placements.name.controller=Cycle Controller (Alt Colorgrade)
+entities.RainTools/AltColorgradeCycleController.attributes.description.cycleTag=Cycle to bind this controller to.
+entities.RainTools/AltColorgradeCycleController.attributes.description.styleTag=Styleground tag for the Alt Colorgrade effects to modify.
+entities.RainTools/AltColorgradeCycleController.attributes.description.colorgrade=Colorgrade at this point in the cycle.
+entities.RainTools/AltColorgradeCycleController.attributes.description.colorgradeEase=Ease function to use for the colorgrade between this stop and the next.
+entities.RainTools/AltColorgradeCycleController.attributes.description.alpha=Intensity of the colorgrade at this point in the cycle.
+entities.RainTools/AltColorgradeCycleController.attributes.description.alphaEase=Ease function to use for the alpha between this stop and the next.
+entities.RainTools/AltColorgradeCycleController.attributes.description.mode=What parts of the effect to change.
+
+# styleground
+entities.RainTools/StylegroundCycleController.placements.name.controller=Cycle Controller (Styleground)
+entities.RainTools/StylegroundCycleController.attributes.description.cycleTag=Cycle to bind this controller to.
+entities.RainTools/StylegroundCycleController.attributes.description.styleTag=Styleground tag for the stylegrounds to modify.
+entities.RainTools/StylegroundCycleController.attributes.description.color=Color at this point in the cycle.
+entities.RainTools/StylegroundCycleController.attributes.description.colorEase=Ease function to use for the color between this stop and the next.
+entities.RainTools/StylegroundCycleController.attributes.description.alpha=Opacity at this point in the cycle.
+entities.RainTools/StylegroundCycleController.attributes.description.alphaEase=Ease function to use for the opacity between this stop and the next.
+entities.RainTools/StylegroundCycleController.attributes.description.mode=What parts of the effect to change.
+
+# flag
+entities.RainTools/FlagCycleController.placements.name.controller=Cycle Controller (Set Flag)
+entities.RainTools/FlagCycleController.attributes.description.cycleTag=Cycle to bind this controller to.
+entities.RainTools/FlagCycleController.attributes.description.flag=Flag to change.
+entities.RainTools/FlagCycleController.attributes.description.stateOnEnter=When the cycle enters this trigger, the flag is set to the value of this checkbox.
+entities.RainTools/FlagCycleController.attributes.description.stateOnLeave=When the cycle exits this trigger, the flag is set to the value of this checkbox.
+entities.RainTools/FlagCycleController.attributes.description.arcAngle=Radians of arc that this trigger covers.
+
+# -- triggers --
+
+# styleground
 triggers.RainTools/StylegroundFade.placements.name.trigger=Styleground Fade
+triggers.RainTools/StylegroundFade.attributes.description.styleTag=Styleground tag for the stylegrounds to modify.
+entities.RainTools/StylegroundFade.attributes.description.colorEase=Ease function to use for the color.
+entities.RainTools/StylegroundFade.attributes.description.alphaEase=Ease function to use for the alpha.
+entities.RainTools/StylegroundFade.attributes.description.mode=What parts of the effect to change.
+
+# lighting blur
 triggers.RainTools/LightingBlurFade.placements.name.trigger=Lighting Blur Fade
+triggers.RainTools/LightingBlurFade.attributes.description.styleTag=Styleground tag for the Sunlight effects to modify.
+triggers.RainTools/LightingBlurFade.attributes.description.positionMode=Determines which direction the blur fades towards.
+triggers.RainTools/LightingBlurFade.attributes.description.mode=Which blur layers to change.
+
+# -- effects --
+
+# alt colorgrade
+style.effects.RainTools/AltColorgrade.attribute.color=Tint to apply to the colorgrade.
+style.effects.RainTools/AltColorgrade.attribute.alpha=Intensity for the entire effect.
+style.effects.RainTools/AltColorgrade.attribute.colorgradeA=Colorgrade to blend from.
+style.effects.RainTools/AltColorgrade.attribute.colorgradeB=Colorgrade to blend to.
+style.effects.RainTools/AltColorgrade.attribute.blendFactor=How much of colorgrade B is used compared to colorgrade A.
+
+# ambient light
+style.effects.RainTools/AmbientLight.attribute.lightColor=Color of the light.
+style.effects.RainTools/AmbientLight.attribute.alpha=Intensity of the light.
+
+# sunlight
+style.effects.RainTools/Sunlight.attribute.lightColor=Color of the light.
+style.effects.RainTools/Sunlight.attribute.alpha=Intensity of the light.
+style.effects.RainTools/Sunlight.attribute.angle=Angle in radians of the light, with 0 pointing right.
+style.effects.RainTools/Sunlight.attribute.blur1=Blurriness of the first blur pass.
+style.effects.RainTools/Sunlight.attribute.blur2=Blurriness of the second blur pass.
