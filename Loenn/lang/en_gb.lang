@@ -83,19 +83,24 @@ triggers.RainTools/LightingBlurFade.attributes.description.mode=Which blur layer
 # -- effects --
 
 # alt colorgrade
-style.effects.RainTools/AltColorgrade.attribute.color=Tint to apply to the colorgrade.
-style.effects.RainTools/AltColorgrade.attribute.alpha=Intensity for the entire effect.
-style.effects.RainTools/AltColorgrade.attribute.colorgradeA=Colorgrade to blend from.
-style.effects.RainTools/AltColorgrade.attribute.colorgradeB=Colorgrade to blend to.
-style.effects.RainTools/AltColorgrade.attribute.blendFactor=How much of colorgrade B is used compared to colorgrade A.
+style.effects.RainTools/AltColorgrade.name=Alt Colorgrade
+style.effects.RainTools/AltColorgrade.description.color=Tint to apply to the colorgrade.
+style.effects.RainTools/AltColorgrade.description.alpha=Intensity for the entire effect.
+style.effects.RainTools/AltColorgrade.description.colorgradeA=Colorgrade to blend from.
+style.effects.RainTools/AltColorgrade.description.colorgradeB=Colorgrade to blend to.
+style.effects.RainTools/AltColorgrade.description.blendFactor=How much of colorgrade B is used compared to colorgrade A.
 
 # ambient light
-style.effects.RainTools/AmbientLight.attribute.lightColor=Color of the light.
-style.effects.RainTools/AmbientLight.attribute.alpha=Intensity of the light.
+style.effects.RainTools/AmbientLight.name=Ambient Light
+style.effects.RainTools/AmbientLight.description.lightColor=Color of the light.
+style.effects.RainTools/AmbientLight.description.alpha=Intensity of the light.
 
 # sunlight
-style.effects.RainTools/Sunlight.attribute.lightColor=Color of the light.
-style.effects.RainTools/Sunlight.attribute.alpha=Intensity of the light.
-style.effects.RainTools/Sunlight.attribute.angle=Angle in radians of the light, with 0 pointing right.
-style.effects.RainTools/Sunlight.attribute.blur1=Blurriness of the first blur pass.
-style.effects.RainTools/Sunlight.attribute.blur2=Blurriness of the second blur pass.
+style.effects.RainTools/Sunlight.name=Sunlight
+style.effects.RainTools/Sunlight.description.lightColor=Color of the light.
+style.effects.RainTools/Sunlight.description.alpha=Intensity of the light.
+style.effects.RainTools/Sunlight.description.angle=Angle in radians of the light, with 0 pointing right.
+style.effects.RainTools/Sunlight.description.blur1=Blurriness of the first blur pass.
+style.effects.RainTools/Sunlight.attribute.blur1=Blur 1
+style.effects.RainTools/Sunlight.description.blur2=Blurriness of the second blur pass.
+style.effects.RainTools/Sunlight.attribute.blur2=Blur 2
