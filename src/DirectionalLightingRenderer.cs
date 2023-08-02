@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -78,7 +79,7 @@ namespace Celeste.Mod.RainTools {
                 capacity_target = 0;
 
             if (verts == null || capacity_target > verts.Length || capacity_target + RESIZE_DOWN_BUFFER < verts.Length)
-                verts = new VertexPositionColor[capacity_target + RESIZE_UP_BUFFER];
+                Array.Resize(ref verts, capacity_target + RESIZE_UP_BUFFER);
 
             v = 0;
             foreach (var shadow in Shadows) {

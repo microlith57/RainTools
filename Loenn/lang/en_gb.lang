@@ -1,10 +1,12 @@
 entities.RainTools/ShadowLine.placements.name.shadowLine=Shadow Line
 entities.RainTools/ShadowRectangle.placements.name.shadowRect=Shadow Rectangle
 
-entities.RainTools/SunlightAngleTimeController.placements.name.controller=Time Controller (Sunlight Angle)
-entities.RainTools/ColorgradeTimeController.placements.name.controller=Time Controller (Colorgrade)
-entities.RainTools/AltColorgradeTimeController.placements.name.controller=Time Controller (Alt Colorgrade)
-entities.RainTools/StylegroundTimeController.placements.name.controller=Time Controller (Styleground)
+entities.RainTools/CycleController.placements.name.controller=Cycle Controller (Cycle)
+entities.RainTools/SunlightAngleCycleController.placements.name.controller=Cycle Controller (Sunlight Angle)
+entities.RainTools/ColorgradeCycleController.placements.name.controller=Cycle Controller (Colorgrade)
+entities.RainTools/AltColorgradeCycleController.placements.name.controller=Cycle Controller (Alt Colorgrade)
+entities.RainTools/StylegroundCycleController.placements.name.controller=Cycle Controller (Styleground)
+entities.RainTools/FlagCycleController.placements.name.controller=Cycle Controller (Set Flag)
 
 triggers.RainTools/StylegroundFade.placements.name.trigger=Styleground Fade
 triggers.RainTools/LightingBlurFade.placements.name.trigger=Lighting Blur Fade

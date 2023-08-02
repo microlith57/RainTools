@@ -77,17 +77,19 @@ namespace Celeste.Mod.RainTools {
                                       .Where(c => c.HasEffect);
 
             foreach (var bg in bgs) {
-                MTexture a = GFX.ColorGrades.GetOrDefault(bg.ColorgradeA, GFX.ColorGrades["none"]);
-                MTexture b = GFX.ColorGrades.GetOrDefault(bg.ColorgradeB, GFX.ColorGrades["none"]);
+                var a = GFX.ColorGrades.GetOrDefault(bg.ColorgradeA, GFX.ColorGrades["none"]);
+                var b = GFX.ColorGrades.GetOrDefault(bg.ColorgradeB, GFX.ColorGrades["none"]);
+                var fac = bg.LerpFactor;
+                var blendState = FrostHelper.API.API.GetBackdropBlendState(bg);
 
                 Engine.Instance.GraphicsDevice.SetRenderTarget(temp);
-                ColorGrade.Set(a, b, bg.LerpFactor);
+                ColorGrade.Set(a, b, fac);
                 Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, GFX.FxColorGrading, Matrix.Identity);
                 Draw.SpriteBatch.Draw(buffer, Vector2.Zero, Color.White);
                 Draw.SpriteBatch.End();
 
                 Engine.Instance.GraphicsDevice.SetRenderTarget(buffer);
-                Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
+                Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, blendState, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
                 Draw.SpriteBatch.Draw(temp, Vector2.Zero, bg.Color * bg.Alpha * bg.FadeAlphaMultiplier);
                 Draw.SpriteBatch.End();
             }

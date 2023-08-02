@@ -10,14 +10,14 @@ lightFade.placements = {
   name = "trigger",
   data = {
     positionMode = "NoEffect",
-    tag = "",
+    styleTag = "",
     colorFrom = "ffffff",
     colorTo = "ffffff",
     alphaFrom = 1,
     alphaTo = 1,
     colorEase = "Linear",
     alphaEase = "Linear",
-    mode = "Both"
+    mode = "ColorAndAlpha"
   }
 }
 lightFade.fieldInformation = {
@@ -26,7 +26,7 @@ lightFade.fieldInformation = {
     editable = false
   },
   mode = {
-    options = {"ColorOnly", "AlphaOnly", "Both"},
+    options = {"ColorTimesPrevA", "ColorTimesAlpha", "ColorOnly", "AlphaOnly", "ColorAndAlpha"},
     editable = false
   },
   colorFrom = {fieldType = "color"},
@@ -40,7 +40,8 @@ lightFade.fieldInformation = {
     editable = true
   }
 }
-
--- todo extended trigger text
+lightFade._lonnExt_extendedText = function(trigger)
+  return string.format("%s, %s, %s", trigger.tag or "no tag!", trigger.positionMode or "NoEffect", trigger.mode or "Both")
+end
 
 return lightFade

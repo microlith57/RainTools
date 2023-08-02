@@ -5,15 +5,17 @@ using Microsoft.Xna.Framework;
 namespace Celeste.Mod.RainTools {
     [CustomEntity("RainTools/LightingBlurFade")]
     public class LightingBlurFadeTrigger : Trigger {
+        public string StyleTag;
+
         public PositionModes PositionMode;
+        public BlurLayerChangeMode ChangeMode;
 
-        public bool FadeBlur1, FadeBlur2;
         public float Blur1From, Blur1To, Blur2From, Blur2To;
-
-        public string[] EffectTags;
 
         public LightingBlurFadeTrigger(EntityData data, Vector2 offset) : base(data, offset) {
             Tag |= Tags.TransitionUpdate;
+
+            StyleTag = data.Attr("styleTag");
 
             PositionMode = data.Enum("positionMode", PositionModes.NoEffect);
 
@@ -22,10 +24,7 @@ namespace Celeste.Mod.RainTools {
             Blur2From = data.Float("blur2From", 1f);
             Blur2To = data.Float("blur2To", 1f);
 
-            FadeBlur1 = data.Bool("fadeBlur1", false);
-            FadeBlur2 = data.Bool("fadeBlur2", true);
-
-            EffectTags = data.Attr("tag", "sun").Split(',');
+            ChangeMode = data.Enum<BlurLayerChangeMode>("mode", BlurLayerChangeMode.Both);
         }
 
         public override void OnStay(Player player) {
@@ -35,15 +34,13 @@ namespace Celeste.Mod.RainTools {
 
             var level = Scene as Level;
 
-            var effects = level.Foreground.Backdrops
-                .FindAll((e) => e is Sunlight l
-                             && l.Tags.Intersect(EffectTags).Any())
-                .Cast<Sunlight>();
+            var effects = level.Foreground.GetEach<Sunlight>(StyleTag)
+                                          .Cast<Sunlight>();
 
             foreach (var effect in effects) {
-                if (FadeBlur1)
+                if (ChangeMode != BlurLayerChangeMode.OnlyBlur2)
                     effect.Blur1 = blur1;
-                if (FadeBlur2)
+                if (ChangeMode != BlurLayerChangeMode.OnlyBlur1)
                     effect.Blur2 = blur2;
             }
         }

@@ -6,26 +6,32 @@ using System.Linq;
 namespace Celeste.Mod.RainTools {
     [Tracked(true)]
     [GlobalEntity]
-    [CustomEntity("RainTools/AltColorgradeTimeController")]
-    public class AltColorgradeTimeController : Entity {
+    [CustomEntity("RainTools/AltColorgradeCycleController")]
+    public class AltColorgradeCycleController : Entity {
         public CircularColorgradeInterpolator Colorgrades;
         public CircularFloatInterpolator Alphas;
 
-        public string SearchTag;
+        public string CycleTag;
+        public string StyleTag;
         public float Alpha;
 
         private EntityData _data;
         private Vector2 _offset;
 
-        public AltColorgradeTimeController(string tag) : base() {
+        public AltColorgradeCycleController(string cycleTag, string styleTag) : base() {
             Tag |= Tags.Global | Tags.TransitionUpdate | Tags.FrozenUpdate;
 
-            SearchTag = tag;
             Colorgrades = new();
             Alphas = new();
+
+            CycleTag = cycleTag;
+            StyleTag = styleTag;
         }
 
-        public AltColorgradeTimeController(EntityData data, Vector2 offset) : this(data.Attr("tag")) {
+        public AltColorgradeCycleController(EntityData data, Vector2 offset)
+            : this(data.Attr("cycleTag"),
+                   data.Attr("styleTag")) {
+
             _data = data;
             _offset = offset;
         }
@@ -33,9 +39,9 @@ namespace Celeste.Mod.RainTools {
         public override void Added(Scene scene) {
             base.Added(scene);
 
-            var existing = scene.Tracker.GetEntities<AltColorgradeTimeController>()
-                                        .Cast<AltColorgradeTimeController>()
-                                        .Where((c) => c.SearchTag == SearchTag);
+            var existing = scene.Tracker.GetEntities<AltColorgradeCycleController>()
+                                        .Cast<AltColorgradeCycleController>()
+                                        .Where((c) => c.StyleTag == StyleTag);
 
             if (existing.Any((c) => c != this)) {
                 existing.First().AddStop(_data, _offset);
@@ -70,22 +76,23 @@ namespace Celeste.Mod.RainTools {
         public override void Update() {
             base.Update();
 
-            float sunAngle = RainToolsModule.Session.SunAngle;
-
-            var bgs = (Scene as Level).Foreground.GetEach<AltColorgrade>(SearchTag)
+            var fgs = (Scene as Level).Foreground.GetEach<AltColorgrade>(StyleTag)
                                                  .Cast<AltColorgrade>();
+            if (!fgs.Any())
+                return;
 
-            var blend = Colorgrades.GetOrDefault(sunAngle);
-            var alpha = Alphas.GetOrDefault(sunAngle);
+            float angle = Cycles.GetAngle(CycleTag);
+            var blend = Colorgrades.GetOrDefault(angle);
+            var alpha = Alphas.GetOrDefault(angle);
 
-            foreach (var bg in bgs) {
+            foreach (var backdrop in fgs) {
                 if (Colorgrades.Any) {
-                    bg.ColorgradeA = blend.a;
-                    bg.ColorgradeB = blend.b;
-                    bg.LerpFactor = blend.fac;
+                    backdrop.ColorgradeA = blend.a;
+                    backdrop.ColorgradeB = blend.b;
+                    backdrop.LerpFactor = blend.fac;
                 }
                 if (Alphas.Any)
-                    bg.Alpha = alpha;
+                    backdrop.Alpha = alpha;
             }
         }
     }

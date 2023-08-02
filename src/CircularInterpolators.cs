@@ -43,7 +43,7 @@ namespace Celeste.Mod.RainTools {
         }
 
         public void Add(float angleRadians, T stop, string easerName = "") {
-            var ease = easerName == "" ? Ease.Linear : FrostHelper.EaseHelper.GetEase(easerName, Ease.Linear);
+            var ease = easerName == "" ? Ease.Linear : FrostHelper.API.API.GetEaser(easerName, Ease.Linear);
 
             Add(angleRadians, stop, ease);
         }

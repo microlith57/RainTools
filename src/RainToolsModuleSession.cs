@@ -1,9 +1,7 @@
-using Monocle;
-using System;
+using System.Collections.Generic;
 
 namespace Celeste.Mod.RainTools {
     public class RainToolsModuleSession : EverestModuleSession {
-        public float Time = 0f;
-        public float SunAngle => Calc.WrapAngle((Time - 0.25f) * (float)(2f * Math.PI));
+        public Dictionary<string, float> CycleProgressions { get; set; } = new();
     }
 }

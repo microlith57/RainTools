@@ -6,20 +6,23 @@ using System.Linq;
 namespace Celeste.Mod.RainTools {
     [Tracked(true)]
     [GlobalEntity]
-    [CustomEntity("RainTools/ColorgradeTimeController")]
-    public class ColorgradeTimeController : Entity {
+    [CustomEntity("RainTools/ColorgradeCycleController")]
+    public class ColorgradeCycleController : Entity {
         public CircularColorgradeInterpolator Colorgrades;
+
+        public string CycleTag;
+        public string Flag;
 
         private EntityData _data;
         private Vector2 _offset;
 
-        public ColorgradeTimeController() : base() {
+        public ColorgradeCycleController(string cycleTag) : base() {
             Tag |= Tags.Global | Tags.TransitionUpdate | Tags.FrozenUpdate;
 
             Colorgrades = new();
         }
 
-        public ColorgradeTimeController(EntityData data, Vector2 offset) : this() {
+        public ColorgradeCycleController(EntityData data, Vector2 offset) : this(data.Attr("cycleTag")) {
             _data = data;
             _offset = offset;
         }
@@ -27,8 +30,8 @@ namespace Celeste.Mod.RainTools {
         public override void Added(Scene scene) {
             base.Added(scene);
 
-            var existing = scene.Tracker.GetEntities<ColorgradeTimeController>()
-                                        .Cast<ColorgradeTimeController>();
+            var existing = scene.Tracker.GetEntities<ColorgradeCycleController>()
+                                        .Cast<ColorgradeCycleController>();
 
             if (existing.Any((c) => c != this)) {
                 existing.First().AddStop(_data, _offset);
@@ -46,6 +49,9 @@ namespace Celeste.Mod.RainTools {
             var angle = (nodePos - pos).Angle();
 
             Colorgrades.Add(angle, data.Attr("colorgrade", "none"), data.Attr("colorgradeEase"));
+
+            if (Flag == "")
+                Flag = data.Attr("flag");
         }
 
         public override void Update() {
@@ -53,8 +59,11 @@ namespace Celeste.Mod.RainTools {
 
             Level level = Scene as Level;
 
-            float sunAngle = RainToolsModule.Session.SunAngle;
-            var blend = Colorgrades.Get(sunAngle);
+            if (Flag != "" && !level.Session.GetFlag(Flag))
+                return;
+
+            float angle = Cycles.GetAngle(CycleTag);
+            var blend = Colorgrades.Get(angle);
 
             level.lastColorGrade = blend.a;
             level.Session.ColorGrade = blend.b;
