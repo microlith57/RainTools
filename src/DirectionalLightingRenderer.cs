@@ -93,6 +93,12 @@ namespace Celeste.Mod.RainTools {
                 GFX.DrawVertices(mat, verts, v);
         }
 
+        public void Triangle(VertexPositionColor a, VertexPositionColor b, VertexPositionColor c) {
+            verts[v++] = a;
+            verts[v++] = b;
+            verts[v++] = c;
+        }
+
         public void Triangle(Vector3 a, Vector3 b, Vector3 c, Color col) {
             verts[v].Position = a;
             verts[v++].Color = col;
@@ -104,23 +110,42 @@ namespace Celeste.Mod.RainTools {
             verts[v++].Color = col;
         }
 
-        public void Parallelogram(Vector2 a, Vector2 b, float length, Color col) {
-            float depthA = ZPositionFor(a);
-            float depthB = ZPositionFor(b);
+        public void Parallelogram(VertexVector2Color a, VertexVector2Color b, float length) {
+            float depthA = ZPositionFor(a.Position);
+            float depthB = ZPositionFor(b.Position);
 
-            Vector3 pos1 = new Vector3(a, depthA);
-            Vector3 pos2 = new Vector3(b, depthB);
-            Vector3 pos3 = new Vector3(a + Light * length, depthA);
-            Vector3 pos4 = new Vector3(b + Light * length, depthB);
+            VertexPositionColor a1 = new(new(a.Position, depthA), a.Color);
+            VertexPositionColor a2 = new(new(a.Position + Light * length, depthA), a.Color);
+            VertexPositionColor b1 = new(new(b.Position, depthB), b.Color);
+            VertexPositionColor b2 = new(new(b.Position + Light * length, depthB), b.Color);
 
-            Triangle(pos1, pos2, pos3, col);
-            Triangle(pos2, pos3, pos4, col);
+            Triangle(a1, b1, a2);
+            Triangle(b1, a2, b2);
         }
 
         public float ZPositionFor(Vector2 point) {
+            // todo fix
             Vector2 axis = Light * CircleRad;
             // todo: make this work even for distant shadows (w/ sigmoid?)
             return 0.5f + 0.1f * Vector2.Dot(point - (CenterPos - axis), 2 * axis) / (CircleRad * 2 * CircleRad * 2);
+        }
+    }
+
+    public struct VertexVector2Color {
+        public Vector2 Position;
+        public Color Color;
+
+        public VertexVector2Color(Vector2 position, Color color) {
+            Position = position;
+            Color = color;
+        }
+
+        public static VertexVector2Color operator +(VertexVector2Color vertex, Vector2 offset) {
+            return new(vertex.Position + offset, vertex.Color);
+        }
+
+        public static VertexVector2Color operator -(VertexVector2Color vertex, Vector2 offset) {
+            return new(vertex.Position - offset, vertex.Color);
         }
     }
 }

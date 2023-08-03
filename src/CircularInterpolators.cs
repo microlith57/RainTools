@@ -98,6 +98,7 @@ namespace Celeste.Mod.RainTools {
     }
 
     public class CircularColorInterpolator : SimpleCircularInterpolator<Color> {
+        // todo: hsv lerp?
         public override Color Lerp(Color a, Color b, float fac) {
             return Color.Lerp(a, b, fac);
         }

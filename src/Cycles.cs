@@ -1,21 +1,14 @@
 using System;
-using Microsoft.Xna.Framework;
-using Monocle;
-using Celeste.Mod.Entities;
-using System.Linq;
 
 namespace Celeste.Mod.RainTools {
     public static class Cycles {
-        public static float Time => GetProgression("time");
-
         public static bool Has(string tag) {
             return RainToolsModule.Session.CycleProgressions.ContainsKey(tag);
         }
 
         public static float GetProgression(string tag) {
-            if (RainToolsModule.Session.CycleProgressions.TryGetValue(tag, out float progression)) {
+            if (RainToolsModule.Session.CycleProgressions.TryGetValue(tag, out float progression))
                 return progression;
-            }
             return 0f;
         }
 
@@ -34,5 +27,9 @@ namespace Celeste.Mod.RainTools {
                 RainToolsModule.Session.CycleProgressions[tag] = value;
             }
         }
+
+        public static string Debugging = null;
+        public static float DebugProgression => Debugging == null ? 0f : GetProgression(Debugging);
+        public static float DebugAngle => Debugging == null ? 0f : GetAngle(Debugging);
     }
 }

@@ -7,6 +7,8 @@ namespace Celeste.Mod.RainTools {
     [GlobalEntity]
     [CustomEntity("RainTools/FlagCycleController")]
     public class FlagCycleController : CycleTriggerController {
+        // todo investigate weirdness around timings
+
         public string Flag;
         public bool StateOnEnter, StateOnLeave;
 

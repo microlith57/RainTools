@@ -6,6 +6,11 @@ entities.RainTools/ShadowLine.attributes.description.offset=How many pixels away
 entities.RainTools/ShadowLine.attributes.description.length=How many pixels long the shadow is.
 entities.RainTools/ShadowLine.attributes.description.letsInLight=If ticked, casts a light instead of a shadow.
 entities.RainTools/ShadowLine.attributes.description.alpha=How opaque the shadow or light should be.
+entities.RainTools/ShadowLineLinearColors.placements.name.shadowLine=Shadow Line (Linear Colours)
+entities.RainTools/ShadowLineLinearColors.attributes.description.colorA=Color at the start of the line.
+entities.RainTools/ShadowLineLinearColors.attributes.description.colorB=Color at the end of the line.
+entities.RainTools/ShadowLineLinearColors.attributes.description.alphaA=Opacity at the start of the line.
+entities.RainTools/ShadowLineLinearColors.attributes.description.alphaB=Opacity at the end of the line.
 
 # shadow rectangle
 entities.RainTools/ShadowRectangle.placements.name.shadowRect=Shadow Rectangle
@@ -13,6 +18,7 @@ entities.RainTools/ShadowRectangle.attributes.description.offset=How many pixels
 entities.RainTools/ShadowRectangle.attributes.description.length=How many pixels long the shadow is.
 entities.RainTools/ShadowRectangle.attributes.description.letsInLight=If ticked, casts a light instead of a shadow.
 entities.RainTools/ShadowRectangle.attributes.description.alpha=How opaque the shadow or light should be.
+entities.RainTools/ShadowRectangleLinearColors.placements.name.shadowRect=Shadow Rectangle (Linear Colours)
 
 # -- cycle controllers --
 
