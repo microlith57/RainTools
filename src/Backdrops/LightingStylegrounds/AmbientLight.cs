@@ -4,6 +4,7 @@ using Monocle;
 namespace Celeste.Mod.RainTools {
     [CustomBackdrop("RainTools/AmbientLight")]
     public class AmbientLight : LightingStyleground {
+
         public AmbientLight(BinaryPacker.Element data) {
             UseSpritebatch = true;
             Color = Calc.HexToColor(data.Attr("lightColor")) * data.AttrFloat("alpha", 1f);
@@ -12,5 +13,6 @@ namespace Celeste.Mod.RainTools {
         public override void RenderLighting(Scene scene) {
             Draw.Rect(0, 0, 320, 180, Color * FadeAlphaMultiplier);
         }
+
     }
 }

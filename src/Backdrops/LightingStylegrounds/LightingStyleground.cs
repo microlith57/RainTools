@@ -25,6 +25,8 @@ namespace Celeste.Mod.RainTools {
         public virtual void BeforeRenderLighting(Scene scene) { }
         public virtual void RenderLighting(Scene scene) { }
 
+        #region hook
+
         internal static void Load() {
             On.Celeste.LightingRenderer.BeforeRender += LightingRenderer_BeforeRender;
         }
@@ -53,17 +55,17 @@ namespace Celeste.Mod.RainTools {
             foreach (var backdrop in bgs) {
                 if (backdrop.LightVisible) {
                     if (backdrop.UseSpritebatch)
-                        StartSpritebatch(ref usingSpritebatch);
+                        startSpritebatch(ref usingSpritebatch);
                     else
-                        EndSpritebatch(ref usingSpritebatch);
+                        endSpritebatch(ref usingSpritebatch);
 
                     backdrop.RenderLighting(level);
                 }
             }
-            EndSpritebatch(ref usingSpritebatch);
+            endSpritebatch(ref usingSpritebatch);
         }
 
-        private static void StartSpritebatch(ref bool usingSpritebatch) {
+        private static void startSpritebatch(ref bool usingSpritebatch) {
             if (usingSpritebatch)
                 return;
 
@@ -77,12 +79,15 @@ namespace Celeste.Mod.RainTools {
             usingSpritebatch = true;
         }
 
-        private static void EndSpritebatch(ref bool usingSpritebatch) {
+        private static void endSpritebatch(ref bool usingSpritebatch) {
             if (!usingSpritebatch)
                 return;
 
             Draw.SpriteBatch.End();
             usingSpritebatch = false;
         }
+
+        #endregion
+
     }
 }

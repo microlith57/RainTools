@@ -8,6 +8,7 @@ namespace Celeste.Mod.RainTools {
     [GlobalEntity]
     [CustomEntity("RainTools/ColorgradeCycleController")]
     public class ColorgradeCycleController : Entity {
+
         public CircularColorgradeInterpolator Colorgrades;
 
         public string CycleTag;
@@ -69,5 +70,6 @@ namespace Celeste.Mod.RainTools {
             level.Session.ColorGrade = blend.b;
             level.colorGradeEase = blend.fac;
         }
+
     }
 }

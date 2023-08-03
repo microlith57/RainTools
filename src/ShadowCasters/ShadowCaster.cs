@@ -5,6 +5,7 @@ namespace Celeste.Mod.RainTools {
     [Tracked(true)]
     [GlobalEntity]
     public abstract class ShadowCaster : Entity {
+
         public readonly int MaxTriCount;
 
         public ShadowCaster(Vector2 position, int maxTriCount) : base(position) {
@@ -13,5 +14,6 @@ namespace Celeste.Mod.RainTools {
         }
 
         public abstract void UpdateVerts(DirectionalLightingRenderer state);
+
     }
 }

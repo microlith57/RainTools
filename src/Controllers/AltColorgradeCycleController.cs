@@ -8,6 +8,7 @@ namespace Celeste.Mod.RainTools {
     [GlobalEntity]
     [CustomEntity("RainTools/AltColorgradeCycleController")]
     public class AltColorgradeCycleController : Entity {
+
         public CircularColorgradeInterpolator Colorgrades;
         public CircularFloatInterpolator Alphas;
 
@@ -58,7 +59,7 @@ namespace Celeste.Mod.RainTools {
             Vector2 nodePos = data.NodesOffset(offset)[0];
             var angle = (nodePos - pos).Angle();
 
-            var change = data.Enum<ColorgradeAlphaChangeMode>("mode", ColorgradeAlphaChangeMode.Both);
+            var change = data.Enum("mode", ColorgradeAlphaChangeMode.Both);
 
             if (change != ColorgradeAlphaChangeMode.AlphaOnly
                 && data.Attr("colorgrade") != "") {
@@ -95,5 +96,6 @@ namespace Celeste.Mod.RainTools {
                     backdrop.Alpha = alpha;
             }
         }
+
     }
 }

@@ -21,7 +21,7 @@ namespace Celeste.Mod.RainTools {
             StyleTag = data.Attr("styleTag");
 
             PositionMode = data.Enum<PositionModes>("positionMode");
-            ChangeMode = data.Enum<ColorRGBAAlphaChangeMode>("mode", ColorRGBAAlphaChangeMode.ColorTimesPrevA);
+            ChangeMode = data.Enum("mode", ColorRGBAAlphaChangeMode.ColorTimesPrevA);
 
             ColorFrom = Calc.HexToColorWithAlpha(data.Attr("colorFrom"));
             ColorTo = Calc.HexToColorWithAlpha(data.Attr("colorTo"));

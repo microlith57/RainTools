@@ -24,7 +24,7 @@ namespace Celeste.Mod.RainTools {
             Blur2From = data.Float("blur2From", 1f);
             Blur2To = data.Float("blur2To", 1f);
 
-            ChangeMode = data.Enum<BlurLayerChangeMode>("mode", BlurLayerChangeMode.Both);
+            ChangeMode = data.Enum("mode", BlurLayerChangeMode.Both);
         }
 
         public override void OnStay(Player player) {

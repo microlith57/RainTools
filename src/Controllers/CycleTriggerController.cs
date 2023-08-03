@@ -3,6 +3,7 @@ using Monocle;
 
 namespace Celeste.Mod.RainTools {
     public abstract class CycleTriggerController : Entity {
+
         public string CycleTag;
         public float CenterAngle;
         public float ArcAngle;
@@ -41,5 +42,6 @@ namespace Celeste.Mod.RainTools {
         public virtual void OnEnter() { }
         public virtual void OnLeave() { }
         public virtual void OnStay() { }
+
     }
 }

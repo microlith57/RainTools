@@ -140,12 +140,7 @@ namespace Celeste.Mod.RainTools {
             Color = color;
         }
 
-        public static VertexVector2Color operator +(VertexVector2Color vertex, Vector2 offset) {
-            return new(vertex.Position + offset, vertex.Color);
-        }
-
-        public static VertexVector2Color operator -(VertexVector2Color vertex, Vector2 offset) {
-            return new(vertex.Position - offset, vertex.Color);
-        }
+        public static VertexVector2Color operator +(VertexVector2Color vertex, Vector2 offset) => new(vertex.Position + offset, vertex.Color);
+        public static VertexVector2Color operator -(VertexVector2Color vertex, Vector2 offset) => new(vertex.Position - offset, vertex.Color);
     }
 }

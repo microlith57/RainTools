@@ -9,6 +9,7 @@ using Celeste.Mod.Backdrops;
 namespace Celeste.Mod.RainTools {
     [CustomBackdrop("RainTools/AltColorgrade")]
     public class AltColorgrade : Backdrop {
+
         public bool Enabled = true;
         public float Alpha = 1f;
         public string ColorgradeA = "none";
@@ -84,17 +85,18 @@ namespace Celeste.Mod.RainTools {
 
                 Engine.Instance.GraphicsDevice.SetRenderTarget(temp);
                 ColorGrade.Set(a, b, fac);
-                Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, GFX.FxColorGrading, Matrix.Identity);
+                Draw.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, GFX.FxColorGrading, Matrix.Identity);
                 Draw.SpriteBatch.Draw(buffer, Vector2.Zero, Color.White);
                 Draw.SpriteBatch.End();
 
                 Engine.Instance.GraphicsDevice.SetRenderTarget(buffer);
-                Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, blendState, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
+                Draw.SpriteBatch.Begin(SpriteSortMode.Immediate, blendState, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
                 Draw.SpriteBatch.Draw(temp, Vector2.Zero, bg.Color * bg.Alpha * bg.FadeAlphaMultiplier);
                 Draw.SpriteBatch.End();
             }
         }
 
         #endregion
+
     }
 }

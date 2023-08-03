@@ -39,13 +39,13 @@ namespace Celeste.Mod.RainTools {
         }
 
         internal static void Load() {
-            Everest.Events.LevelLoader.OnLoadingThread += onLoad;
             On.Celeste.MapData.Load += onMapDataLoad;
+            Everest.Events.LevelLoader.OnLoadingThread += onLoad;
         }
 
         internal static void Unload() {
-            Everest.Events.LevelLoader.OnLoadingThread -= onLoad;
             On.Celeste.MapData.Load -= onMapDataLoad;
+            Everest.Events.LevelLoader.OnLoadingThread -= onLoad;
         }
 
         private static void onMapDataLoad(On.Celeste.MapData.orig_Load orig, MapData mapData) {
@@ -53,8 +53,7 @@ namespace Celeste.Mod.RainTools {
 
             var dyndata = DynamicData.For(mapData);
 
-            List<Tuple<EntityData, Vector2>> entities;
-            if (dyndata.TryGet("raintools_global_entities", out entities)) {
+            if (dyndata.TryGet<List<Tuple<EntityData, Vector2>>>("raintools_global_entities", out var entities)) {
                 entities.Clear();
             } else {
                 entities = new();
@@ -77,12 +76,12 @@ namespace Celeste.Mod.RainTools {
             var mapData = level.Session.MapData;
             var dyndata = DynamicData.For(mapData);
 
-            if (dyndata.TryGet<List<Tuple<EntityData, Vector2>>>("raintools_global_entities", out var shadowData)) {
-                foreach (var shadow in shadowData) {
-                    var loader = Level.EntityLoaders[shadow.Item1.Name];
-                    var entity = loader.Invoke(level, shadow.Item1.Level, shadow.Item2, shadow.Item1);
-                    if (entity is not null)
-                        level.Add(entity);
+            if (dyndata.TryGet<List<Tuple<EntityData, Vector2>>>("raintools_global_entities", out var entities)) {
+                foreach (var entity in entities) {
+                    var loader = Level.EntityLoaders[entity.Item1.Name];
+                    var instance = loader.Invoke(level, entity.Item1.Level, entity.Item2, entity.Item1);
+                    if (instance is not null)
+                        level.Add(instance);
                 }
             }
         }

@@ -8,6 +8,7 @@ namespace Celeste.Mod.RainTools {
     [GlobalEntity]
     [CustomEntity("RainTools/StylegroundCycleController")]
     public class StylegroundCycleController : Entity {
+
         public string CycleTag;
         public string StyleTag;
 
@@ -34,7 +35,7 @@ namespace Celeste.Mod.RainTools {
         public StylegroundCycleController(EntityData data, Vector2 offset)
             : this(data.Attr("cycleTag"),
                    data.Attr("styleTag"),
-                   data.Enum<ColorRGBAAlphaChangeMode>("mode", ColorRGBAAlphaChangeMode.ColorAndAlpha)) {
+                   data.Enum("mode", ColorRGBAAlphaChangeMode.ColorAndAlpha)) {
 
             _data = data;
             _offset = offset;
@@ -82,5 +83,6 @@ namespace Celeste.Mod.RainTools {
 
             StylegroundFadeTrigger.Apply(Scene as Level, StyleTag, color, alpha, ChangeMode);
         }
+
     }
 }

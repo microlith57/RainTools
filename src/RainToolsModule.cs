@@ -2,6 +2,7 @@
 
 namespace Celeste.Mod.RainTools {
     public class RainToolsModule : EverestModule {
+
         public static RainToolsModule Instance { get; private set; }
 
         public override Type SettingsType => typeof(RainToolsModuleSettings);
@@ -32,5 +33,6 @@ namespace Celeste.Mod.RainTools {
             LightingStyleground.Unload();
             AltColorgrade.Unload();
         }
+
     }
 }

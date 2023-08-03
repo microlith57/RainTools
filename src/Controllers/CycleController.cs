@@ -7,6 +7,7 @@ namespace Celeste.Mod.RainTools {
     [GlobalEntity]
     [CustomEntity("RainTools/CycleController")]
     public class CycleController : Entity {
+
         public string CycleTag;
         public float Offset, SecondsPerCycle;
         public string Flag;
@@ -45,5 +46,6 @@ namespace Celeste.Mod.RainTools {
             if (SecondsPerCycle > 0)
                 Cycles.AddProgression(CycleTag, Engine.DeltaTime / SecondsPerCycle);
         }
+
     }
 }

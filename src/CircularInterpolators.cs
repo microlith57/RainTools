@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace Celeste.Mod.RainTools {
     public abstract class CircularInterpolator<T, T_out> {
+
         public List<float> StopAngles;
         public List<T> StopValues;
         public List<Ease.Easer> StopEasers;
@@ -53,7 +54,7 @@ namespace Celeste.Mod.RainTools {
 
         public T_out GetOrDefault(float angleRadians) {
             if (Count == 0) {
-                return default(T_out);
+                return default;
             } else if (Count == 1) {
                 return Convert(StopValues.First());
             } else {
@@ -79,10 +80,11 @@ namespace Celeste.Mod.RainTools {
 
         public T_out Get(float angleRadians) {
             if (!Any)
-                throw new ArgumentOutOfRangeException();
+                throw new IndexOutOfRangeException("cannot retrieve value from circular interpolator with no stops");
 
             return GetOrDefault(angleRadians);
         }
+
     }
 
     public abstract class SimpleCircularInterpolator<T> : CircularInterpolator<T, T> {
@@ -105,6 +107,7 @@ namespace Celeste.Mod.RainTools {
     }
 
     public class CircularColorgradeInterpolator : CircularInterpolator<string, CircularColorgradeInterpolator.Blend> {
+
         public struct Blend {
             public string a, b;
             public float fac;
@@ -125,9 +128,11 @@ namespace Celeste.Mod.RainTools {
         public override Blend Lerp(string a, string b, float fac) {
             return new(a, b, fac);
         }
+
     }
 
     public class CircularColorGradientInterpolator : SimpleCircularInterpolator<Color[]> {
+
         public int Length { get; private set; }
 
         public override void Add(float angleRadians, Color[] stop, Ease.Easer easer) {
@@ -147,5 +152,6 @@ namespace Celeste.Mod.RainTools {
             }
             return result;
         }
+
     }
 }

@@ -8,6 +8,7 @@ namespace Celeste.Mod.RainTools {
     [GlobalEntity]
     [CustomEntity("RainTools/SunlightAngleCycleController")]
     public class SunlightAngleCycleController : Entity {
+
         public string CycleTag;
         public string StyleTag;
         public float Offset;
@@ -36,5 +37,6 @@ namespace Celeste.Mod.RainTools {
                 backdrop.Angle = angle;
             }
         }
+
     }
 }

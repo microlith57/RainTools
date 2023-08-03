@@ -7,6 +7,7 @@ namespace Celeste.Mod.RainTools {
     [CustomEntity("RainTools/ShadowRectangle=Load",
                   "RainTools/ShadowRectangleLinearColors=LoadLinearColors")]
     public class ShadowRectangle : ShadowCaster {
+
         public float ShadowLength, Offset;
         public Color TopLeftColor, TopRightColor, BottomLeftColor, BottomRightColor;
         public bool Concave;
@@ -128,5 +129,6 @@ namespace Celeste.Mod.RainTools {
             state.Triangle(b_n, b_f, c_n);
             state.Triangle(b_f, c_n, c_f);
         }
+
     }
 }

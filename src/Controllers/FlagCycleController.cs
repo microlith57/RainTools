@@ -7,6 +7,7 @@ namespace Celeste.Mod.RainTools {
     [GlobalEntity]
     [CustomEntity("RainTools/FlagCycleController")]
     public class FlagCycleController : CycleTriggerController {
+
         // todo investigate weirdness around timings
 
         public string Flag;
@@ -25,5 +26,6 @@ namespace Celeste.Mod.RainTools {
         public override void OnLeave() {
             (Scene as Level).Session.SetFlag(Flag, StateOnLeave);
         }
+
     }
 }

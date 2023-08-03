@@ -6,6 +6,7 @@ namespace Celeste.Mod.RainTools {
     [CustomEntity("RainTools/ShadowLine=Load",
                   "RainTools/ShadowLineLinearColors=LoadLinearColors")]
     public class ShadowLine : ShadowCaster {
+
         public VertexVector2Color[] Vertices;
         public float ShadowLength, Offset;
 
@@ -90,5 +91,6 @@ namespace Celeste.Mod.RainTools {
                           Color.Magenta);
             }
         }
+
     }
 }

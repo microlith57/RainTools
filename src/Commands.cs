@@ -2,6 +2,7 @@ using Monocle;
 
 namespace Celeste.Mod.RainTools {
     public static class Commands {
+
         [Command("cycle_set", "set a cycle progression to the given value")]
         public static void CycleSet(string cycle, float value = 0) {
             Cycles.SetProgression(cycle, value);
@@ -20,5 +21,6 @@ namespace Celeste.Mod.RainTools {
             else
                 Cycles.Debugging = cycle;
         }
+
     }
 }

@@ -2,6 +2,7 @@ using System;
 
 namespace Celeste.Mod.RainTools {
     public static class Cycles {
+
         public static bool Has(string tag) {
             return RainToolsModule.Session.CycleProgressions.ContainsKey(tag);
         }
@@ -31,5 +32,6 @@ namespace Celeste.Mod.RainTools {
         public static string Debugging = null;
         public static float DebugProgression => Debugging == null ? 0f : GetProgression(Debugging);
         public static float DebugAngle => Debugging == null ? 0f : GetAngle(Debugging);
+
     }
 }
