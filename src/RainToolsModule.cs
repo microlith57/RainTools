@@ -23,6 +23,7 @@ namespace Celeste.Mod.RainTools {
         }
 
         public override void Load() {
+            ModIntegration.CommunalHelper.Load();
             GlobalEntityAttribute.Load();
             LightingStyleground.Load();
             AltColorgrade.Load();

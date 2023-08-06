@@ -183,26 +183,27 @@ namespace Celeste.Mod.RainTools {
 
     }
 
-    public class CircularColorGradientInterpolator : SimpleCircularInterpolator<Color[]> {
+    public class CircularColorGradientInterpolator : CircularInterpolator<Color[], CircularColorGradientInterpolator.Blend> {
 
-        public int Length { get; private set; }
+        public struct Blend {
+            public Color[] a, b;
+            public float fac;
 
-        public override void Add(float angleRadians, Color[] stop, Ease.Easer easer) {
-            if (Count == 0)
-                Length = stop.Length;
+            public Blend(Color[] a, Color[] b, float fac) {
+                this.a = a;
+                this.b = b;
+                this.fac = fac;
+            }
 
-            if (stop.Length != Length)
-                throw new ArgumentException("gradient stop is of incorrect length for this gradient");
-
-            base.Add(angleRadians, stop, easer);
+            public Blend(Color[] gradient) : this(gradient, gradient, 0f) { }
         }
 
-        public override Color[] Lerp(Color[] a, Color[] b, float fac) {
-            var result = new Color[Length];
-            for (int i = 0; i < Length; i++) {
-                result[i] = Color.Lerp(a[i], b[i], fac);
-            }
-            return result;
+        public override Blend Convert(Color[] val) {
+            return new(val);
+        }
+
+        public override Blend Lerp(Color[] a, Color[] b, float fac) {
+            return new(a, b, fac);
         }
 
     }
