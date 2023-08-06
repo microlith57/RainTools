@@ -1,3 +1,4 @@
+using Monocle;
 using System;
 
 namespace Celeste.Mod.RainTools {
@@ -14,7 +15,7 @@ namespace Celeste.Mod.RainTools {
         }
 
         public static float GetAngle(string tag, float offset = -(float) Math.PI / 2f, float multipler = 1f) {
-            return (float) (GetProgression(tag) * multipler * 2f * Math.PI) + offset;
+            return Calc.WrapAngle((float) (GetProgression(tag) * multipler * 2f * Math.PI) + offset);
         }
 
         public static void SetProgression(string tag, float value) {

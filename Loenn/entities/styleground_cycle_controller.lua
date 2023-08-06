@@ -72,4 +72,6 @@ function styleground_cycle_controller.nodeRectangle(room, entity, node)
   return utils.rectangle(node.x - 4, node.y - 4, 8, 8)
 end
 
+-- todo flip, rotate
+
 return styleground_cycle_controller
