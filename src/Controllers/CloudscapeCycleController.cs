@@ -58,12 +58,13 @@ namespace Celeste.Mod.RainTools {
             Vector2 nodePos = data.NodesOffset(offset)[0];
             var angle = (nodePos - pos).Angle();
 
-            BackgroundColors.Add(angle, Calc.HexToColorWithAlpha(data.Attr("bgcolor", "ffffff")));
-
-            RingColors.Add(angle, data.Attr("colors", "ffffff")
+            RingColors.Add(angle, data.Attr("ringColors", "6d8ada,aea0c1,d9cbbc")
                                       .Split(',')
                                       .Select(part => Calc.HexToColorWithAlpha(part.Trim()))
-                                      .ToArray());
+                                      .ToArray(),
+                           data.Attr("ringEase", "Linear"));
+
+            BackgroundColors.Add(angle, Calc.HexToColorWithAlpha(data.Attr("backgroundColor", "4f9af7")), data.Attr("backgroundEase", "Linear"));
         }
 
         public override void Awake(Scene scene) {
