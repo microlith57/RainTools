@@ -148,9 +148,9 @@ namespace Celeste.Mod.RainTools {
             HSVConversion.ColorToHSV(System.Drawing.Color.FromArgb(a.A, a.R, a.G, a.B), out var ha, out var sa, out var va);
             HSVConversion.ColorToHSV(System.Drawing.Color.FromArgb(b.A, b.R, b.G, b.B), out var hb, out var sb, out var vb);
 
-            var h = Calc.AngleLerp((float)ha * Calc.DegToRad, (float)hb * Calc.DegToRad, fac) * Calc.RadToDeg;
-            var s = MathHelper.Lerp((float)sa, (float)sb, fac);
-            var v = MathHelper.Lerp((float)va, (float)vb, fac);
+            var h = Calc.AngleLerp((float) ha * Calc.DegToRad, (float) hb * Calc.DegToRad, fac) * Calc.RadToDeg;
+            var s = MathHelper.Lerp((float) sa, (float) sb, fac);
+            var v = MathHelper.Lerp((float) va, (float) vb, fac);
             var alpha = MathHelper.Lerp(a.A, b.A, fac) / 255f;
 
             var result = HSVConversion.ColorFromHSV(h, s, v);
