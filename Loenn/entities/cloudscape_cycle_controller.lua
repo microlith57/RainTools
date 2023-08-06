@@ -11,6 +11,7 @@ cloudscape_cycle_controller.name = "RainTools/CloudscapeCycleController"
 cloudscape_cycle_controller.depth = 0
 cloudscape_cycle_controller.nodeLimits = {1, 1}
 cloudscape_cycle_controller.nodeVisibility = "always"
+cloudscape_cycle_controller.associatedMods = { "RainTools", "CommunalHelper" }
 cloudscape_cycle_controller.placements = {
   name = "controller",
   data = {
