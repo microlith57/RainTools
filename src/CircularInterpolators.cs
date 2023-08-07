@@ -87,6 +87,31 @@ namespace Celeste.Mod.RainTools {
 
     }
 
+    public class BlendedCircularInterpolator<T> : CircularInterpolator<T, BlendedCircularInterpolator<T>.Blend> {
+
+        public struct Blend {
+            public T a, b;
+            public float fac;
+
+            public Blend(T a, T b, float fac) {
+                this.a = a;
+                this.b = b;
+                this.fac = fac;
+            }
+
+            public Blend(T val) : this(val, val, 0f) { }
+        }
+
+        public override Blend Convert(T val) {
+            return new(val);
+        }
+
+        public override Blend Lerp(T a, T b, float fac) {
+            return new(a, b, fac);
+        }
+
+    }
+
     public abstract class SimpleCircularInterpolator<T> : CircularInterpolator<T, T> {
         public override T Convert(T val) {
             return val;
@@ -158,53 +183,4 @@ namespace Celeste.Mod.RainTools {
         }
     }
 
-    public class CircularColorgradeInterpolator : CircularInterpolator<string, CircularColorgradeInterpolator.Blend> {
-
-        public struct Blend {
-            public string a, b;
-            public float fac;
-
-            public Blend(string a, string b, float fac) {
-                this.a = a;
-                this.b = b;
-                this.fac = fac;
-            }
-
-            public Blend(string colorgrade) : this(colorgrade, colorgrade, 0f) { }
-        }
-
-        public override Blend Convert(string val) {
-            return new(val);
-        }
-
-        public override Blend Lerp(string a, string b, float fac) {
-            return new(a, b, fac);
-        }
-
-    }
-
-    public class CircularColorGradientInterpolator : CircularInterpolator<Color[], CircularColorGradientInterpolator.Blend> {
-
-        public struct Blend {
-            public Color[] a, b;
-            public float fac;
-
-            public Blend(Color[] a, Color[] b, float fac) {
-                this.a = a;
-                this.b = b;
-                this.fac = fac;
-            }
-
-            public Blend(Color[] gradient) : this(gradient, gradient, 0f) { }
-        }
-
-        public override Blend Convert(Color[] val) {
-            return new(val);
-        }
-
-        public override Blend Lerp(Color[] a, Color[] b, float fac) {
-            return new(a, b, fac);
-        }
-
-    }
 }

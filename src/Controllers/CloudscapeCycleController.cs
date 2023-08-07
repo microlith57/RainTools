@@ -13,7 +13,7 @@ namespace Celeste.Mod.RainTools {
         public string StyleTag;
 
         public CircularColorInterpolator BackgroundColors;
-        public CircularColorGradientInterpolator RingColors;
+        public BlendedCircularInterpolator<Color[]> RingColors;
 
         private EntityData _data;
         private Vector2 _offset;
