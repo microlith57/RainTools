@@ -8,6 +8,7 @@ namespace Celeste.Mod.RainTools {
     [CustomBackdrop("RainTools/Sunlight")]
     public class Sunlight : LightingStyleground {
         public const int DOWNRES_FACTOR = 2;
+        public static Vector2 RENDER_OFFSET = new Vector2(320, 180) / 2f - new Vector2(320, 180) / (2f * DOWNRES_FACTOR);
 
         public float Angle;
         public float Blur1, Blur2;
@@ -17,11 +18,13 @@ namespace Celeste.Mod.RainTools {
         private RenderTarget2D target;
         // private MTexture clouds;
 
+        private Vector2 offset;
+
         public Sunlight(BinaryPacker.Element data) {
             target = new(Engine.Instance.GraphicsDevice,
-                         320 / DOWNRES_FACTOR, 180 / DOWNRES_FACTOR,
+                         320, 180,
                          mipMap: false,
-                         SurfaceFormat.Color, DepthFormat.Depth16);
+                         SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
 
             UseSpritebatch = true;
 
@@ -34,6 +37,8 @@ namespace Celeste.Mod.RainTools {
         }
 
         public override void BeforeRenderLighting(Scene scene) {
+            var level = scene as Level;
+
             var light = Calc.Rotate(Vector2.UnitX, Angle);
             if (state == null) {
                 var shadows = scene.Tracker.GetEntitiesCopy<ShadowCaster>().ConvertAll((e) => e as ShadowCaster);
@@ -43,21 +48,21 @@ namespace Celeste.Mod.RainTools {
             }
 
             state.Generate();
+            if (state.verts == null || state.v <= 0)
+                return;
 
-            var cam_pos = (scene as Level).Camera.Position;
-            cam_pos.X = (float) Math.Round(cam_pos.X);
-            cam_pos.Y = (float) Math.Round(cam_pos.Y);
+            var snapped = new Vector2((float) Math.Round(level.Camera.Position.X / 2) * 2,
+                                      (float) Math.Round(level.Camera.Position.Y / 2) * 2);
+            var pos = level.Camera.Position;
+            offset = snapped - pos;
 
-            var offset = (new Vector2(320, 180) - new Vector2(target.Width, target.Height)) / 2f;
-            offset += new Vector2(cam_pos.X % 2, cam_pos.Y % 2);
-
-            var mat = Matrix.CreateTranslation(new(-cam_pos, 0f))
-                    * Matrix.CreateScale(new Vector3(Vector2.One / DOWNRES_FACTOR, 1f))
-                    * Matrix.CreateTranslation(new(offset, 0f));
+            var matrix = Matrix.CreateTranslation(RENDER_OFFSET.X - snapped.X, RENDER_OFFSET.Y - snapped.Y, 0f) * Matrix.CreateScale(1f / DOWNRES_FACTOR, 1f / DOWNRES_FACTOR, 0.5f);
 
             Engine.Graphics.GraphicsDevice.SetRenderTarget(GameplayBuffers.TempA);
             Engine.Graphics.GraphicsDevice.Clear(Color.White);
-            state.Draw(mat);
+            Engine.Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
+            state.Draw(matrix);
 
             if (Blur1 > 0)
                 GaussianBlur.Blur(GameplayBuffers.TempA, GameplayBuffers.TempB, GameplayBuffers.TempA, sampleScale: Blur1);
@@ -71,14 +76,17 @@ namespace Celeste.Mod.RainTools {
 
             Engine.Graphics.GraphicsDevice.SetRenderTarget(target);
             Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise);
-            Draw.SpriteBatch.Draw(GameplayBuffers.TempA, -offset, Color.White);
+            Draw.SpriteBatch.Draw(GameplayBuffers.TempA, new Vector2(320, 180) / 2f, target.Bounds, Color.White, 0f, new Vector2(target.Width, target.Height) / 2f, 1f, SpriteEffects.None, 0f);
             Draw.SpriteBatch.End();
         }
 
         public override void RenderLighting(Scene scene) {
             if (target == null || target.IsDisposed)
                 return;
-            Draw.SpriteBatch.Draw(target, Vector2.Zero, target.Bounds, Color * FadeAlphaMultiplier, 0f, Vector2.Zero, DOWNRES_FACTOR, SpriteEffects.None, 0f);
+            var pos = new Vector2(320, 180) / 2;
+            var tl = pos - new Vector2(target.Width, target.Height) / 2 + offset - RENDER_OFFSET;
+
+            Draw.SpriteBatch.Draw(target, tl, target.Bounds, Color * FadeAlphaMultiplier, 0f, Vector2.Zero, DOWNRES_FACTOR, SpriteEffects.None, 0f);
         }
     }
 }

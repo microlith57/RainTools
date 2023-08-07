@@ -127,7 +127,7 @@ namespace Celeste.Mod.RainTools {
             // todo fix
             Vector2 axis = Light * CircleRad;
             // todo: make this work even for distant shadows (w/ sigmoid?)
-            return 0.5f + 0.1f * Vector2.Dot(point - (CenterPos - axis), 2 * axis) / (CircleRad * 2 * CircleRad * 2);
+            return 1.5f + 0.1f * Vector2.Dot(point - (CenterPos - axis), 2 * axis) / (CircleRad * 2 * CircleRad * 2);
         }
     }
 
