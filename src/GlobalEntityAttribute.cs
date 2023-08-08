@@ -10,6 +10,21 @@ using MonoMod.Utils;
 namespace Celeste.Mod.RainTools {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class GlobalEntityAttribute : Attribute {
+        internal struct StoredEntity {
+            public EntityData data;
+            public Vector2 offset;
+            public bool globalTag;
+
+            public StoredEntity(EntityData data, Vector2 offset) {
+                this.data = data;
+                this.offset = offset;
+            }
+
+            public StoredEntity(EntityData data, Vector2 offset, bool globalTag) : this(data, offset) {
+                this.globalTag = globalTag;
+            }
+        }
+
         private static string[] _entityNames;
         private static string[] entityNames {
             get {
@@ -52,23 +67,51 @@ namespace Celeste.Mod.RainTools {
             orig(mapData);
 
             var dyndata = DynamicData.For(mapData);
-
-            if (dyndata.TryGet<List<Tuple<EntityData, Vector2>>>("raintools_global_entities", out var entities)) {
-                entities.Clear();
+            if (dyndata.TryGet<List<StoredEntity>>("raintools_global_entities", out var savedEntities)) {
+                savedEntities.Clear();
             } else {
-                entities = new();
-                dyndata.Set("raintools_global_entities", entities);
+                savedEntities = new();
+                dyndata.Set("raintools_global_entities", savedEntities);
             }
 
             var names = entityNames;
             foreach (var levelData in mapData.Levels) {
-                levelData.Entities.RemoveAll((e) => {
-                    if (!names.Contains(e.Name))
-                        return false;
+                bool foundController = false;
+                bool controllerSetsGlobalTag = false;
 
-                    entities.Add(new(e, levelData.Position));
-                    return true;
+                levelData.Entities.RemoveAll(e => {
+                    if (e.Name == "RainTools/GlobalEntityController") {
+                        foundController = true;
+                        controllerSetsGlobalTag = e.Bool("setGlobalTag", true);
+                        return true;
+                    }
+
+                    if (names.Contains(e.Name)) {
+                        savedEntities.Add(new(e, levelData.Position));
+                        return true;
+                    }
+
+                    return false;
                 });
+
+                if (foundController) {
+                    levelData.Entities.RemoveAll(e => {
+                        if (!Level.EntityLoaders.ContainsKey(e.Name))
+                            return false;
+
+                        savedEntities.Add(new(e, levelData.Position, controllerSetsGlobalTag));
+                        return true;
+                    });
+
+                    // todo change id for consistency with non-global triggers
+                    levelData.Triggers.RemoveAll(e => {
+                        if (!Level.EntityLoaders.ContainsKey(e.Name))
+                            return false;
+
+                        savedEntities.Add(new(e, levelData.Position, controllerSetsGlobalTag));
+                        return true;
+                    });
+                }
             }
         }
 
@@ -76,12 +119,18 @@ namespace Celeste.Mod.RainTools {
             var mapData = level.Session.MapData;
             var dyndata = DynamicData.For(mapData);
 
-            if (dyndata.TryGet<List<Tuple<EntityData, Vector2>>>("raintools_global_entities", out var entities)) {
-                foreach (var entity in entities) {
-                    var loader = Level.EntityLoaders[entity.Item1.Name];
-                    var instance = loader.Invoke(level, entity.Item1.Level, entity.Item2, entity.Item1);
-                    if (instance is not null)
-                        level.Add(instance);
+            if (dyndata.TryGet<List<StoredEntity>>("raintools_global_entities", out var savedEntities)) {
+                foreach (var saved in savedEntities) {
+                    var loader = Level.EntityLoaders[saved.data.Name];
+                    var instance = loader.Invoke(level, saved.data.Level, saved.offset, saved.data);
+
+                    if (instance is null)
+                        continue;
+
+                    if (saved.globalTag)
+                        instance.Tag |= Tags.Global;
+
+                    level.Add(instance);
                 }
             }
         }

@@ -80,6 +80,12 @@ entities.RainTools/FlagCycleController.attributes.description.stateOnEnter=When 
 entities.RainTools/FlagCycleController.attributes.description.stateOnLeave=When the cycle exits this trigger, the flag is set to the value of this checkbox.
 entities.RainTools/FlagCycleController.attributes.description.arcAngle=Radians of arc that this trigger covers.
 
+# -- utility controllers --
+
+# global entity
+entities.RainTools/GlobalEntityController.placements.name.controller=Global Entity Controller
+entities.RainTools/GlobalEntityController.attributes.description.setGlobalTag=If set, entities affected don't despawn when the player dies or changes rooms.
+
 # -- triggers --
 
 # styleground
