@@ -9,7 +9,7 @@ namespace Celeste.Mod.RainTools {
     [CustomEntity("RainTools/AltColorgradeCycleController")]
     public class AltColorgradeCycleController : Entity {
 
-        public CircularColorgradeInterpolator Colorgrades;
+        public BlendedCircularInterpolator<string> Colorgrades;
         public CircularFloatInterpolator Alphas;
 
         public string CycleTag;
