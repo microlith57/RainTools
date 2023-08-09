@@ -112,25 +112,25 @@ namespace Celeste.Mod.RainTools {
 
             if (ExtendEnds) {
                 var midpoint = start - along * 1024;
-                gradient[v].Color = Colors[0];
+                gradient[v].Color = Colors[0] * Alpha;
                 gradient[v++].Position = new(midpoint - span, 0);
-                gradient[v].Color = Colors[0];
+                gradient[v].Color = Colors[0] * Alpha;
                 gradient[v++].Position = new(midpoint + span, 0);
             }
 
             for (int i = 0; i < colors.Length; i++) {
                 var midpoint = start + along * stepSize * i;
-                gradient[v].Color = Colors[i];
+                gradient[v].Color = Colors[i] * Alpha;
                 gradient[v++].Position = new(midpoint - span, 0);
-                gradient[v].Color = Colors[i];
+                gradient[v].Color = Colors[i] * Alpha;
                 gradient[v++].Position = new(midpoint + span, 0);
             }
 
             if (ExtendEnds) {
                 var midpoint = start + along * (GradientLength + 1024);
-                gradient[v].Color = Colors[^1];
+                gradient[v].Color = Colors[^1] * Alpha;
                 gradient[v++].Position = new(midpoint - span, 0);
-                gradient[v].Color = Colors[^1];
+                gradient[v].Color = Colors[^1] * Alpha;
                 gradient[v++].Position = new(midpoint + span, 0);
             }
 
