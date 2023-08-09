@@ -8,14 +8,13 @@ gradient.defaultData = {
   alpha = 1.0,
   angleDegrees = 0.0,
   gradientLength = 180,
-  smooth = true,
   extendEnds = false
 }
 gradient.fieldOrder = {
   "x", "y", "scrollX", "scrollY",
   "colors", "alpha",
   "angleDegrees", "gradientLength",
-  "smooth", "extendEnds"
+  "extendEnds"
 }
 
 return gradient
