@@ -6,7 +6,7 @@ using Mono.Cecil.Cil;
 using System.Linq;
 using Celeste.Mod.Backdrops;
 
-namespace Celeste.Mod.RainTools {
+namespace Celeste.Mod.RainTools.Backdrops {
     [CustomBackdrop("RainTools/AltColorgrade")]
     public class AltColorgrade : Backdrop {
 

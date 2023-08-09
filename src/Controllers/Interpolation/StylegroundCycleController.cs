@@ -81,7 +81,7 @@ namespace Celeste.Mod.RainTools {
             Color color = Colors.GetOrDefault(angle);
             float alpha = Alphas.GetOrDefault(angle);
 
-            StylegroundFadeTrigger.Apply(Scene as Level, StyleTag, color, alpha, ChangeMode);
+            Triggers.StylegroundFade.Apply(Scene as Level, StyleTag, color, alpha, ChangeMode);
         }
 
     }

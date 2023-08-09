@@ -2,9 +2,9 @@ using System.Linq;
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 
-namespace Celeste.Mod.RainTools {
+namespace Celeste.Mod.RainTools.Triggers {
     [CustomEntity("RainTools/LightingBlurFade")]
-    public class LightingBlurFadeTrigger : Trigger {
+    public class LightingBlurFade : Trigger {
         public string StyleTag;
 
         public PositionModes PositionMode;
@@ -12,7 +12,7 @@ namespace Celeste.Mod.RainTools {
 
         public float Blur1From, Blur1To, Blur2From, Blur2To;
 
-        public LightingBlurFadeTrigger(EntityData data, Vector2 offset) : base(data, offset) {
+        public LightingBlurFade(EntityData data, Vector2 offset) : base(data, offset) {
             Tag |= Tags.TransitionUpdate;
 
             StyleTag = data.Attr("styleTag");
@@ -34,8 +34,8 @@ namespace Celeste.Mod.RainTools {
 
             var level = Scene as Level;
 
-            var effects = level.Foreground.GetEach<Sunlight>(StyleTag)
-                                          .Cast<Sunlight>();
+            var effects = level.Foreground.GetEach<Backdrops.Sunlight>(StyleTag)
+                                          .Cast<Backdrops.Sunlight>();
 
             foreach (var effect in effects) {
                 if (ChangeMode != BlurLayerChangeMode.OnlyBlur2)

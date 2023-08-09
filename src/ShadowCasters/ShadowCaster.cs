@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Monocle;
 
-namespace Celeste.Mod.RainTools {
+namespace Celeste.Mod.RainTools.ShadowCasters {
     [Tracked(true)]
     [GlobalEntity]
     public abstract class ShadowCaster : Entity {

@@ -2,7 +2,7 @@ using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
 
-namespace Celeste.Mod.RainTools {
+namespace Celeste.Mod.RainTools.ShadowCasters {
     [CustomEntity("RainTools/ShadowLine=Load",
                   "RainTools/ShadowLineLinearColors=LoadLinearColors")]
     public class ShadowLine : ShadowCaster {

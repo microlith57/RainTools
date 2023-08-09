@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Monocle;
 using System.Linq;
 
-namespace Celeste.Mod.RainTools {
+namespace Celeste.Mod.RainTools.Backdrops {
     public abstract class LightingStyleground : Backdrop {
 
         public bool LightVisible;

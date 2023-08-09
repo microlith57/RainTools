@@ -26,8 +26,8 @@ namespace Celeste.Mod.RainTools {
         public override void Update() {
             base.Update();
 
-            var fgs = (Scene as Level).Foreground.GetEach<Sunlight>(StyleTag)
-                                                 .Cast<Sunlight>();
+            var fgs = (Scene as Level).Foreground.GetEach<Backdrops.Sunlight>(StyleTag)
+                                                 .Cast<Backdrops.Sunlight>();
             if (!fgs.Any())
                 return;
 

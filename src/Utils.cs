@@ -18,15 +18,12 @@ namespace Celeste.Mod.RainTools {
             return a / GCF(a, b) * b;
         }
 
-        // from https://github.com/CommunalHelper/CommunalHelper/blob/c78ae86324cd380d0731cb4a30ec9f29b151ec4f/src/Utils/Util.cs#L38
-        // used here under the MIT license
         internal static Color ColorArrayLerp(float lerp, params Color[] colors) {
-            float m = Mod(lerp, colors.Length);
-            int fromIndex = (int) Math.Floor(m);
-            int toIndex = Mod(fromIndex + 1, colors.Length);
-            float clampedLerp = m - fromIndex;
+            int fromIndex = (int) Math.Floor(lerp);
+            int toIndex = (int) Math.Ceiling(lerp);
+            float fac = lerp - fromIndex;
 
-            return Color.Lerp(colors[fromIndex], colors[toIndex], clampedLerp);
+            return Color.Lerp(colors[fromIndex], colors[toIndex], fac);
         }
 
         internal static float Mod(float x, float m) {

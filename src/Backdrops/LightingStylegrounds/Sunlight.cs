@@ -3,8 +3,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Celeste.Mod.Backdrops;
 using Monocle;
+using Celeste.Mod.RainTools.ShadowCasters;
 
-namespace Celeste.Mod.RainTools {
+namespace Celeste.Mod.RainTools.Backdrops {
     [CustomBackdrop("RainTools/Sunlight")]
     public class Sunlight : LightingStyleground {
         public const int DOWNRES_FACTOR = 2;

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Monocle;
 
-namespace Celeste.Mod.RainTools {
+namespace Celeste.Mod.RainTools.ShadowCasters {
     [CustomEntity("RainTools/ShadowRectangle=Load",
                   "RainTools/ShadowRectangleLinearColors=LoadLinearColors")]
     public class ShadowRectangle : ShadowCaster {

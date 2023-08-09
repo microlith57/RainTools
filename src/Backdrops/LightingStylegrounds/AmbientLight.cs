@@ -1,7 +1,7 @@
 using Celeste.Mod.Backdrops;
 using Monocle;
 
-namespace Celeste.Mod.RainTools {
+namespace Celeste.Mod.RainTools.Backdrops {
     [CustomBackdrop("RainTools/AmbientLight")]
     public class AmbientLight : LightingStyleground {
 

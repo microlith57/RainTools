@@ -3,9 +3,9 @@ using Microsoft.Xna.Framework;
 using Monocle;
 using System.Linq;
 
-namespace Celeste.Mod.RainTools {
+namespace Celeste.Mod.RainTools.Triggers {
     [CustomEntity("RainTools/StylegroundFade")]
-    public class StylegroundFadeTrigger : Trigger {
+    public class StylegroundFade : Trigger {
         public string StyleTag;
 
         public Color ColorFrom, ColorTo;
@@ -17,7 +17,7 @@ namespace Celeste.Mod.RainTools {
         public PositionModes PositionMode;
         public ColorRGBAAlphaChangeMode ChangeMode;
 
-        public StylegroundFadeTrigger(EntityData data, Vector2 offset) : base(data, offset) {
+        public StylegroundFade(EntityData data, Vector2 offset) : base(data, offset) {
             StyleTag = data.Attr("styleTag");
 
             PositionMode = data.Enum<PositionModes>("positionMode");
