@@ -105,7 +105,12 @@ namespace Celeste.Mod.RainTools {
 
             var along = Vector2.UnitY.Rotate(Angle);
 
-            var start = pos - along * GradientLength / 2f;
+            var screenCenter = new Vector2(320, 180) / 2;
+            var offset = pos - screenCenter;
+            var proj = Vector2.Dot(offset, along) / Vector2.Dot(along, along) * along;
+            var corrected = screenCenter + proj;
+
+            var start = corrected - along * GradientLength / 2f;
             var span = along.Rotate((float) Math.PI / 2f) * DIAGONAL / 2f;
 
             int v = 0;
