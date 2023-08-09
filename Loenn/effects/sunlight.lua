@@ -13,7 +13,7 @@ sunlight.defaultData = {
 sunlight.fieldInformation = {
   lightColor = {fieldType = "color"}
 }
-ambient_light.fieldOrder = {
+sunlight.fieldOrder = {
   "lightColor", "alpha",
   "angle",
   "blur1", "blur2"
