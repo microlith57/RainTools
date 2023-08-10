@@ -46,6 +46,7 @@ namespace Celeste.Mod.RainTools.Backdrops {
             data.AttrFloat("gradientLength", 180),
             data.AttrBool("extendEnds", false)
         ) {
+            Scroll = new(data.AttrFloat("scrollx"), data.AttrFloat("scrolly"));
         }
 
         public void SetColors(BlendedCircularInterpolator<Color[]>.Blend blend) {
@@ -88,10 +89,10 @@ namespace Celeste.Mod.RainTools.Backdrops {
 
             var colors = Colors.Length > 1 ? Colors.ToArray() : new Color[] { Colors[0], Colors[0] };
             for (int i = 0; i < colors.Length; i++) {
-                colors[i].R = (byte) (colors[i].R * (Color.R / 255f));
-                colors[i].G = (byte) (colors[i].G * (Color.G / 255f));
-                colors[i].B = (byte) (colors[i].B * (Color.B / 255f));
-                colors[i].A = (byte) (colors[i].A * (Color.A / 255f));
+                colors[i].R = (byte) (colors[i].R * (Color.R / 255f) * FadeAlphaMultiplier);
+                colors[i].G = (byte) (colors[i].G * (Color.G / 255f) * FadeAlphaMultiplier);
+                colors[i].B = (byte) (colors[i].B * (Color.B / 255f) * FadeAlphaMultiplier);
+                colors[i].A = (byte) (colors[i].A * (Color.A / 255f) * FadeAlphaMultiplier);
             }
 
             Vector2 cam = ((scene as Level).Camera.Position + CameraOffset).Floor();

@@ -26,14 +26,14 @@ namespace Celeste.Mod.RainTools {
         public override void Update() {
             base.Update();
 
+            var bgs = (Scene as Level).Background.GetEach<Backdrops.IHasAngle>(StyleTag)
+                                                 .Cast<Backdrops.IHasAngle>();
             var fgs = (Scene as Level).Foreground.GetEach<Backdrops.IHasAngle>(StyleTag)
                                                  .Cast<Backdrops.IHasAngle>();
-            if (!fgs.Any())
-                return;
 
             float angle = Calc.WrapAngle(Cycles.GetAngle(CycleTag) * Multiplier + Offset);
 
-            foreach (var backdrop in fgs) {
+            foreach (var backdrop in bgs.Union(fgs)) {
                 backdrop.SetAngle(angle);
             }
         }
