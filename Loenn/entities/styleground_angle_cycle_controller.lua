@@ -2,31 +2,31 @@ local utils = require("utils")
 local drawableSprite = require("structs.drawable_sprite")
 local drawableLine = require("structs.drawable_line")
 
-local sunlight_angle_cycle_controller = {}
+local angle_cycle_controller = {}
 
-sunlight_angle_cycle_controller.name = "RainTools/SunlightAngleCycleController"
-sunlight_angle_cycle_controller.depth = 0
-sunlight_angle_cycle_controller.placements = {
+angle_cycle_controller.name = "RainTools/StylegroundAngleCycleController"
+angle_cycle_controller.depth = 0
+angle_cycle_controller.placements = {
   name = "controller",
   data = {
     cycleTag = "",
     styleTag = "",
     angleMultiplier = 1,
-    angleOffset = 0
+    angleOffsetDegrees = 0
   }
 }
-sunlight_angle_cycle_controller.fieldInformation = {
+angle_cycle_controller.fieldInformation = {
   angleMultiplier = {
     fieldType = "integer"
   }
 }
-sunlight_angle_cycle_controller.fieldOrder = {
+angle_cycle_controller.fieldOrder = {
   "x", "y",
   "cycleTag", "styleTag",
-  "angleMultiplier", "angleOffset"
+  "angleMultiplier", "angleOffsetDegrees"
 }
 
-function sunlight_angle_cycle_controller.sprite(room, entity)
+function angle_cycle_controller.sprite(room, entity)
   local baseSprite = drawableSprite.fromTexture("RainTools/cycle_controller_base", entity)
   local frontSprite = drawableSprite.fromTexture("RainTools/cycle_controller_sunlight_angle", entity)
   local errorSprite
@@ -39,4 +39,4 @@ function sunlight_angle_cycle_controller.sprite(room, entity)
   return {baseSprite, frontSprite, errorSprite}
 end
 
-return sunlight_angle_cycle_controller
+return angle_cycle_controller

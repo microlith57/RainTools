@@ -6,35 +6,35 @@ using System.Linq;
 namespace Celeste.Mod.RainTools {
     [Tracked(true)]
     [GlobalEntity]
-    [CustomEntity("RainTools/SunlightAngleCycleController")]
-    public class SunlightAngleCycleController : Entity {
+    [CustomEntity("RainTools/StylegroundAngleCycleController")]
+    public class StylegroundAngleCycleController : Entity {
 
         public string CycleTag;
         public string StyleTag;
         public float Offset;
         public int Multiplier;
 
-        public SunlightAngleCycleController(EntityData data, Vector2 offset) : base() {
+        public StylegroundAngleCycleController(EntityData data, Vector2 offset) : base() {
             Tag |= Tags.Global | Tags.TransitionUpdate | Tags.FrozenUpdate;
 
             CycleTag = data.Attr("cycleTag");
             StyleTag = data.Attr("styleTag");
-            Offset = data.Float("angleOffset", 0f);
+            Offset = data.Float("angleOffsetDegrees", 0) * Calc.DegToRad;
             Multiplier = data.Int("angleMultiplier", 1);
         }
 
         public override void Update() {
             base.Update();
 
-            var fgs = (Scene as Level).Foreground.GetEach<Backdrops.Sunlight>(StyleTag)
-                                                 .Cast<Backdrops.Sunlight>();
+            var fgs = (Scene as Level).Foreground.GetEach<Backdrops.IHasAngle>(StyleTag)
+                                                 .Cast<Backdrops.IHasAngle>();
             if (!fgs.Any())
                 return;
 
             float angle = Calc.WrapAngle(Cycles.GetAngle(CycleTag) * Multiplier + Offset);
 
             foreach (var backdrop in fgs) {
-                backdrop.Angle = angle;
+                backdrop.SetAngle(angle);
             }
         }
 

@@ -7,7 +7,7 @@ using Celeste.Mod.RainTools.ShadowCasters;
 
 namespace Celeste.Mod.RainTools.Backdrops {
     [CustomBackdrop("RainTools/Sunlight")]
-    public class Sunlight : LightingStyleground {
+    public class Sunlight : LightingStyleground, IHasAngle {
         public const int DOWNRES_FACTOR = 2;
         public static Vector2 RENDER_OFFSET = new Vector2(320, 180) / 2f - new Vector2(320, 180) / (2f * DOWNRES_FACTOR);
 
@@ -29,7 +29,7 @@ namespace Celeste.Mod.RainTools.Backdrops {
 
             UseSpritebatch = true;
 
-            Angle = data.AttrFloat("angle", (float) Math.PI / 2f);
+            Angle = data.AttrFloat("angleOffsetDegrees", 90) * Calc.DegToRad;
             Color = Calc.HexToColor(data.Attr("lightColor", "ffffff")) * data.AttrFloat("alpha", 1f);
             Blur1 = data.AttrFloat("blur1", 2f);
             Blur2 = data.AttrFloat("blur2", 1f);
@@ -88,6 +88,14 @@ namespace Celeste.Mod.RainTools.Backdrops {
             var tl = pos - new Vector2(target.Width, target.Height) / 2 + offset - RENDER_OFFSET;
 
             Draw.SpriteBatch.Draw(target, tl, target.Bounds, Color * FadeAlphaMultiplier, 0f, Vector2.Zero, DOWNRES_FACTOR, SpriteEffects.None, 0f);
+        }
+
+        public float GetAngle() {
+            return Angle;
+        }
+
+        public void SetAngle(float angle) {
+            Angle = angle;
         }
     }
 }

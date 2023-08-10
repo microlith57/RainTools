@@ -7,7 +7,7 @@ using System;
 
 namespace Celeste.Mod.RainTools.Backdrops {
     [CustomBackdrop("RainTools/Gradient")]
-    public class Gradient : Backdrop {
+    public class Gradient : Backdrop, IHasAngle {
 
         private const float DIAGONAL = 370f;
 
@@ -165,5 +165,12 @@ namespace Celeste.Mod.RainTools.Backdrops {
             return tris;
         }
 
+        public float GetAngle() {
+            return Angle;
+        }
+
+        public void SetAngle(float angle) {
+            Angle = angle;
+        }
     }
 }

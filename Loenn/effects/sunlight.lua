@@ -6,7 +6,7 @@ sunlight.canBackground = false
 sunlight.defaultData = {
   lightColor = "ffffff",
   alpha = 1.0,
-  angle = 0.0,
+  angleDegrees = 0.0,
   blur1 = 2.0,
   blur2 = 1.0
 }
@@ -15,7 +15,7 @@ sunlight.fieldInformation = {
 }
 sunlight.fieldOrder = {
   "lightColor", "alpha",
-  "angle",
+  "angleDegrees",
   "blur1", "blur2"
 }
 
