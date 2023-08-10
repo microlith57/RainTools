@@ -63,6 +63,13 @@ entities.RainTools/StylegroundCycleController.attributes.description.alpha=Opaci
 entities.RainTools/StylegroundCycleController.attributes.description.alphaEase=Ease function to use for the opacity between this stop and the next.
 entities.RainTools/StylegroundCycleController.attributes.description.mode=What parts of the effect to change.
 
+# gradient
+entities.RainTools/GradientCycleController.placements.name.controller=Cycle Controller (Gradient)
+entities.RainTools/GradientCycleController.attributes.description.cycleTag=Cycle to bind this controller to.
+entities.RainTools/GradientCycleController.attributes.description.styleTag=Styleground tag for the gradient effects to modify.
+entities.RainTools/GradientCycleController.attributes.description.colors=Gradient colors at this point in the cycle.
+entities.RainTools/GradientCycleController.attributes.description.ease=Ease function to use for the colors between this stop and the next.
+
 # cloudscape
 entities.RainTools/CloudscapeCycleController.placements.name.controller=Cycle Controller (Cloudscape)
 entities.RainTools/CloudscapeCycleController.attributes.description.cycleTag=Cycle to bind this controller to.

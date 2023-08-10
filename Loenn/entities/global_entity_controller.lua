@@ -1,3 +1,9 @@
+local mods = require("mods")
+
+if not mods.requireFromPlugin("libraries.feature_flags").dangerous then
+  return {}
+end
+
 local utils = require("utils")
 local drawableSprite = require("structs.drawable_sprite")
 local drawableLine = require("structs.drawable_line")
