@@ -12,13 +12,15 @@ namespace Celeste.Mod.RainTools {
         public BlendedCircularInterpolator<string> Colorgrades;
 
         public string CycleTag;
-        public string Flag;
+        public string Flag = "";
 
         private EntityData _data;
         private Vector2 _offset;
 
         public ColorgradeCycleController(string cycleTag) : base() {
             Tag |= Tags.Global | Tags.TransitionUpdate | Tags.FrozenUpdate;
+
+            CycleTag = cycleTag;
 
             Colorgrades = new();
         }
