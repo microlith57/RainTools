@@ -11,16 +11,9 @@ namespace Celeste.Mod.RainTools.Backdrops {
     public class AltColorgrade : Backdrop {
 
         public bool Enabled = true;
-        public float Alpha = 1f;
         public string ColorgradeA = "none";
         public string ColorgradeB = "none";
         public float LerpFactor = 0f;
-
-        public bool HasEffect => Enabled
-                                && (Alpha > 0f)
-                                && (Color.A > 0)
-                                && !(ColorgradeA == "none" && (ColorgradeB == "none" || LerpFactor == 0f))
-                                && !(ColorgradeB == "none" && LerpFactor == 1f);
 
         public AltColorgrade() : base() {
             Enabled = true;
@@ -28,8 +21,7 @@ namespace Celeste.Mod.RainTools.Backdrops {
         }
 
         public AltColorgrade(BinaryPacker.Element data) {
-            Color = Calc.HexToColor(data.Attr("color"));
-            Alpha = data.AttrFloat("alpha", 1f);
+            Color = Calc.HexToColor(data.Attr("color")) * data.AttrFloat("alpha", 1f);
 
             ColorgradeA = data.Attr("colorgradeA", "none");
             ColorgradeB = data.Attr("colorgradeA", ColorgradeA);
@@ -75,7 +67,9 @@ namespace Celeste.Mod.RainTools.Backdrops {
 
             var bgs = level.Foreground.GetEach<AltColorgrade>()
                                       .Cast<AltColorgrade>()
-                                      .Where(c => c.HasEffect);
+                                      .Where(c => c.Enabled
+                                               && c.FadeAlphaMultiplier > 0f
+                                               && c.Color.A > 0);
 
             foreach (var bg in bgs) {
                 var a = GFX.ColorGrades.GetOrDefault(bg.ColorgradeA, GFX.ColorGrades["none"]);
@@ -91,7 +85,7 @@ namespace Celeste.Mod.RainTools.Backdrops {
 
                 Engine.Instance.GraphicsDevice.SetRenderTarget(buffer);
                 Draw.SpriteBatch.Begin(SpriteSortMode.Immediate, blendState, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
-                Draw.SpriteBatch.Draw(temp, Vector2.Zero, bg.Color * bg.Alpha * bg.FadeAlphaMultiplier);
+                Draw.SpriteBatch.Draw(temp, Vector2.Zero, bg.Color * bg.FadeAlphaMultiplier);
                 Draw.SpriteBatch.End();
             }
         }

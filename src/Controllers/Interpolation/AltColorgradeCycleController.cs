@@ -93,7 +93,7 @@ namespace Celeste.Mod.RainTools {
                     backdrop.LerpFactor = blend.fac;
                 }
                 if (Alphas.Any)
-                    backdrop.Alpha = alpha;
+                    backdrop.FadeAlphaMultiplier = alpha;
             }
         }
 
