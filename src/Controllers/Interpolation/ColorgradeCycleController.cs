@@ -60,8 +60,7 @@ namespace Celeste.Mod.RainTools {
         public override void Update() {
             base.Update();
 
-            Level level = Scene as Level;
-
+            var level = Scene as Level;
             if (Flag != "" && !level.Session.GetFlag(Flag))
                 return;
 

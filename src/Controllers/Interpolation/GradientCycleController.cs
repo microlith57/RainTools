@@ -69,6 +69,8 @@ namespace Celeste.Mod.RainTools {
             base.Update();
 
             var level = Scene as Level;
+            if (Flag != "" && !level.Session.GetFlag(Flag))
+                return;
 
             float angle = Cycles.GetAngle(CycleTag);
             var blend = Colors.Get(angle);

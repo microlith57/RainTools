@@ -79,8 +79,12 @@ namespace Celeste.Mod.RainTools {
         public override void Update() {
             base.Update();
 
-            var fgs = (Scene as Level).Foreground.GetEach<Backdrops.AltColorgrade>(StyleTag)
-                                                 .Cast<Backdrops.AltColorgrade>();
+            var level = Scene as Level;
+            if (Flag != "" && !level.Session.GetFlag(Flag))
+                return;
+
+            var fgs = level.Foreground.GetEach<Backdrops.AltColorgrade>(StyleTag)
+                                      .Cast<Backdrops.AltColorgrade>();
             if (!fgs.Any())
                 return;
 
