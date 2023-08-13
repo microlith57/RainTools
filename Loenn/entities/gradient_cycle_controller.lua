@@ -17,7 +17,8 @@ gradient_cycle_controller.placements = {
     cycleTag = "",
     styleTag = "",
     colors = "7bbedf,0c56c2",
-    ease = "Linear"
+    ease = "Linear",
+    flag = ""
   }
 }
 gradient_cycle_controller.fieldInformation = {

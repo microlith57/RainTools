@@ -18,7 +18,8 @@ alt_colorgrade_cycle_controller.placements = {
     colorgradeEase = "Linear",
     alpha = 1,
     alphaEase = "Linear",
-    mode = "Both"
+    mode = "Both",
+    flag = ""
   }
 }
 alt_colorgrade_cycle_controller.fieldInformation = {

@@ -20,7 +20,8 @@ styleground_cycle_controller.placements = {
     colorEase = "Linear",
     alpha = 1.0,
     alphaEase = "Linear",
-    mode = "ColorAndAlpha"
+    mode = "ColorAndAlpha",
+    flag = ""
   }
 }
 styleground_cycle_controller.fieldInformation = {

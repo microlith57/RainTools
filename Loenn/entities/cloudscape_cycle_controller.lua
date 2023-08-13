@@ -20,7 +20,8 @@ cloudscape_cycle_controller.placements = {
     ringColors = "6d8ada,aea0c1,d9cbbc",
     ringEase = "Linear",
     backgroundColor = "4f9af7",
-    backgroundEase = "Linear"
+    backgroundEase = "Linear",
+    flag = ""
   }
 }
 cloudscape_cycle_controller.fieldInformation = {

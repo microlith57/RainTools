@@ -11,6 +11,7 @@ namespace Celeste.Mod.RainTools {
 
         public string CycleTag;
         public string StyleTag;
+        public string Flag = "";
         public float Offset;
         public int Multiplier;
 
@@ -19,6 +20,7 @@ namespace Celeste.Mod.RainTools {
 
             CycleTag = data.Attr("cycleTag");
             StyleTag = data.Attr("styleTag");
+            Flag = data.Attr("flag");
             Offset = data.Float("angleOffsetDegrees", 0) * Calc.DegToRad;
             Multiplier = data.Int("angleMultiplier", 1);
         }

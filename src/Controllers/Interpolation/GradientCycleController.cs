@@ -11,6 +11,7 @@ namespace Celeste.Mod.RainTools {
 
         public string CycleTag;
         public string StyleTag;
+        public string Flag = "";
 
         public BlendedCircularInterpolator<Color[]> Colors;
 
@@ -32,6 +33,7 @@ namespace Celeste.Mod.RainTools {
 
             _data = data;
             _offset = offset;
+            Flag = data.Attr("flag");
         }
 
         public override void Added(Scene scene) {

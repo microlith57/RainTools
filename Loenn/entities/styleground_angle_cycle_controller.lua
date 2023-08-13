@@ -12,7 +12,8 @@ angle_cycle_controller.placements = {
     cycleTag = "",
     styleTag = "",
     angleMultiplier = 1,
-    angleOffsetDegrees = 0
+    angleOffsetDegrees = 0,
+    flag = ""
   }
 }
 angle_cycle_controller.fieldInformation = {

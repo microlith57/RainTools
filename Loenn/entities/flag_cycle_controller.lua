@@ -15,7 +15,7 @@ flag_cycle_controller.placements = {
     flag = "",
     stateOnEnter = true,
     stateOnLeave = false,
-    arcAngle = 0.01
+    arcAngleDegrees = 1
   }
 }
 flag_cycle_controller.fieldOrder = {
@@ -23,7 +23,7 @@ flag_cycle_controller.fieldOrder = {
   "cycleTag",
   "flag",
   "stateOnEnter", "stateOnLeave",
-  "arcAngle"
+  "arcAngleDegrees"
 }
 
 function flag_cycle_controller.sprite(room, entity)

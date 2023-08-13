@@ -19,7 +19,11 @@ namespace Celeste.Mod.RainTools {
             Vector2 nodePos = data.NodesOffset(offset)[0];
             CenterAngle = (nodePos - pos).Angle();
 
-            ArcAngle = data.Float("arcAngle");
+            ArcAngle = data.Float("arcAngleDegrees") * Calc.DegToRad;
+
+            // don't use this please
+            if (data.Has("arcAngle") && !data.Has("arcAngleDegrees"))
+                ArcAngle = data.Float("arcAngle");
         }
 
         public override void Update() {
