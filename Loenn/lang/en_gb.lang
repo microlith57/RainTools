@@ -132,3 +132,16 @@ style.effects.RainTools/Sunlight.description.blur1=Blurriness of the first blur 
 style.effects.RainTools/Sunlight.attribute.blur1=Blur 1
 style.effects.RainTools/Sunlight.description.blur2=Blurriness of the second blur pass.
 style.effects.RainTools/Sunlight.attribute.blur2=Blur 2
+
+# -- region gate stuff --
+
+entities.RainTools/RegionGate.placements.name.gate=Region Gate
+entities.RainTools/RegionGate.attributes.description.leftSID=SID of the map corresponding to this gate's left side. If empty, the gate cannot be traversed in this direction.
+entities.RainTools/RegionGate.attributes.description.leftSide=Side (A, B, or C) of the map on this gate's left side. If empty, this will be inferred from the current map's side.
+entities.RainTools/RegionGate.attributes.description.rightSID=SID of the map corresponding to this gate's right side. If empty, the gate cannot be traversed in this direction.
+entities.RainTools/RegionGate.attributes.description.rightSide=Side (A, B, or C) of the map on this gate's right side. If empty, this will be inferred from the current map's side.
+entities.RainTools/RegionGate.attributes.description.activationDelay=How many seconds the player must stand in an activation zone before the gate activates.
+
+# activation zone
+triggers.RainTools/RegionGateActivationTrigger.placements.name.trigger=Region Gate Activation Zone
+triggers.RainTools/RegionGateActivationTrigger.attributes.description.side=Which side of the gate this is.

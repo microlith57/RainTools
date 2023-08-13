@@ -1,6 +1,7 @@
 using Monocle;
 using Microsoft.Xna.Framework;
 using System;
+using System.Threading;
 
 namespace Celeste.Mod.RainTools {
     public class AsyncLoader : Component {
@@ -13,16 +14,19 @@ namespace Celeste.Mod.RainTools {
 
         public Action<Level, Level> OnLoad = (a, b) => { };
 
-        public AsyncLoader(AreaKey area, string roomName, Vector2 pos) : base(true, false) {
+        private static WeakReference<Thread> thread;
+
+        public AsyncLoader(AreaKey area, string roomName) : base(true, false) {
             session = new(area) {
                 FirstLevel = false,
                 Level = roomName,
                 StartedFromBeginning = false
             };
 
-            loader = new(session, pos) {
+            loader = new(session, Vector2.Zero) {
                 PlayerIntroTypeOverride = Player.IntroTypes.None
             };
+            thread = LevelLoader.LastLoadingThread;
         }
 
         public override void Update() {
@@ -37,6 +41,12 @@ namespace Celeste.Mod.RainTools {
                     Engine.Scene = loader.Level;
 
                 RemoveSelf();
+            }
+        }
+
+        public void ForceLoadSync() {
+            if (thread.TryGetTarget(out var loadingThread)) {
+                loadingThread.Join();
             }
         }
 

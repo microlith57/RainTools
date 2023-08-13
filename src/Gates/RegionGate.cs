@@ -3,95 +3,155 @@ using Celeste.Mod.Entities;
 using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using System.Collections;
 
 namespace Celeste.Mod.RainTools {
     [Tracked(true)]
     [CustomEntity("RainTools/RegionGate")]
-    // todo get hitbox position based on what door is open etc., so that Position is in the middle of the gate
-    public class RegionGate : Trigger {
+    public class RegionGate : Entity {
 
-        public string SID;
-        public AreaMode? Mode;
+        public readonly string LeftSID;
+        public readonly string RightSID;
+        public AreaMode? LeftMode;
+        public AreaMode? RightMode;
+
+        public Facings Facing;
+        public string DestinationSID => Facing == Facings.Left ? LeftSID : RightSID;
+        public AreaMode? DestinationMode => Facing == Facings.Left ? LeftMode : RightMode;
+        public bool Enabled = true;
 
         private AreaKey? areaKey;
         private AsyncLoader loader;
 
         private string RoomName => (Scene as Level).Session.LevelData.Name;
 
-        private float Timer;
+        private Coroutine closeRoutine, openRoutine;
 
-        Color debugColor = Color.LightGray;
+        public bool Closing => closeRoutine != null;
+        public bool Opening => openRoutine != null;
 
-        public RegionGate(EntityData data, Vector2 offset) : base(data, offset) {
-            SID = data.Attr("destinationSID");
+        private float timer = 0f;
 
-            if (data.Attr("destinationMode") != "")
-                Mode = data.Enum("destinationMode", AreaMode.Normal);
+        public RegionGate(EntityData data, Vector2 offset) : base(data.Position + offset) {
+            LeftSID = data.Attr("leftSID");
+            RightSID = data.Attr("rightSID");
+
+            if (data.Attr("leftSide") != "" && data.Attr("leftSide") != "SameAsCurrentMap")
+                LeftMode = data.Enum("leftSide", AreaMode.Normal);
+
+            if (data.Attr("rightSide") != "" && data.Attr("rightSide") != "SameAsCurrentMap")
+                RightMode = data.Enum("rightSide", AreaMode.Normal);
         }
 
         public override void Added(Scene scene) {
             base.Added(scene);
 
-            Mode ??= (Scene as Level).Session.Area.Mode;
-            areaKey = GetAreaKey();
-        }
-
-        public override void OnStay(Player player) {
-            base.OnStay(player);
-
-            if (loader == null) {
-                if (Timer > 1f) {
-                    if (areaKey.HasValue) {
-                        BeginLoad();
-                    } else {
-                        debugColor = Color.Red;
-                    }
-                } else {
-                    Timer += Engine.DeltaTime;
-                    debugColor = Color.Orange;
-                }
-            }
-        }
-
-        public override void OnLeave(Player player) {
-            base.OnLeave(player);
-
-            if (loader == null)
-                debugColor = Color.LightGray;
-
-            Timer = 0f;
-        }
-
-        public override void DebugRender(Camera camera) {
-            Collider?.Render(camera, debugColor);
-            Components.DebugRender(camera);
-        }
-
-        private void BeginLoad() {
-            if (!areaKey.HasValue || loader != null)
-                return;
-
-            debugColor = Color.Green;
-
-            // coarse pass on position is ok for now; will copy actual player position later
-            loader = new(areaKey.Value, RoomName, Position) {
-                OnLoad = EndLoad
-            };
-            Add(loader);
-
             var level = Scene as Level;
+            var sid = level.Session.Area.SID;
+            var mode = level.Session.Area.Mode;
+
+            if (sid == LeftSID)
+                Facing = Facings.Left;
+            else if (sid == RightSID)
+                Facing = Facings.Right;
+            else
+                throw new Exception($"this gate connects maps with SID '{LeftSID}' and '{RightSID}', but is in a map with SID '{sid}'!");
+
+            LeftMode ??= mode;
+            RightMode ??= mode;
+
+            areaKey = GetAreaKey();
+
+            level.Session.SetFlag($"region_gate_middle", true);
+        }
+
+        public override void Update() {
+            base.Update();
+
+            if (closeRoutine != null && closeRoutine.Finished)
+                closeRoutine = null;
+
+            if (openRoutine != null && openRoutine.Finished)
+                openRoutine = null;
+        }
+
+        public bool Activate(RegionGateActivationZone zone = null) {
+            if (Opening || !areaKey.HasValue)
+                return false;
+            if (Closing || loader != null)
+                return true;
+
+            if (zone == null) {
+                var zones = Scene.Tracker.GetEntities<RegionGateActivationZone>()
+                                         .Cast<RegionGateActivationZone>()
+                                         .Where(z => z.Facing == Facing);
+                if (!zones.Any())
+                    return false;
+
+                zone = zones.First();
+            }
+
+            Add(closeRoutine = new(CloseRoutine(zone)));
+            return true;
+        }
+
+        private IEnumerator CloseRoutine(RegionGateActivationZone activationZone) {
+            var level = Scene as Level;
+
+            level.Session.SetFlag($"region_gate_left", true);
+            level.Session.SetFlag($"region_gate_middle", true);
+            level.Session.SetFlag($"region_gate_right", true);
+
+            // var doors = level.Tracker.GetEntities<RegionGateDoor>().Cast<RegionGateDoor>();
+            // doors.Select(d => d.ShouldBeOpen = false);
+
+            // while (true) {
+            //     if (!activationZone.Triggered) {
+            //         doors.Where(d => d.Facing != RegionGateDoor.Facings.Middle).Select(d => d.ShouldBeOpen = true);
+            //         yield break;
+            //     }
+
+            //     if (doors.All(d => d.IsSolid))
+            //         break;
+
+            //     yield return null;
+            // }
+
             level.PauseLock = true;
             level.CanRetry = false;
             level.SaveQuitDisabled = true;
+
+            Add(loader = new(areaKey.Value, RoomName) {
+                OnLoad = OnLoadFinished
+            });
+
+            for (timer = 0; timer < 1f; timer += Engine.DeltaTime / 2f) {
+                yield return null;
+            }
+
+            loader.ForceLoadSync();
         }
 
-        private void EndLoad(Level levelA, Level levelB) {
-            // todo use specifically gate offsets
-            var offsetA = levelA.LevelOffset;
-            var offsetB = levelB.LevelOffset;
-            var delta = offsetB - offsetA;
+        private IEnumerator OpenRoutine() {
+            var level = Scene as Level;
 
-            levelB.Camera.Position = levelA.Camera.Position - offsetA + offsetB;
+            for (; timer < 2f; timer += Engine.DeltaTime / 2f) {
+                yield return null;
+            }
+
+            level.Session.SetFlag($"region_gate_left", false);
+            level.Session.SetFlag($"region_gate_middle", true);
+            level.Session.SetFlag($"region_gate_right", false);
+        }
+
+        private void OnLoadFinished(Level levelA, Level levelB) {
+            var gateA = this;
+            var gateB = levelB.Tracker.GetEntity<RegionGate>()
+                      ?? throw new Exception("the room on the other side of this gate has no gate in it!");
+
+            var delta = gateB.Position - gateA.Position;
+
+            levelB.Camera.Position = levelA.Camera.Position + delta;
             levelB.Wipe.Cancel();
 
             var playerA = levelA.Tracker.GetEntity<Player>();
@@ -160,17 +220,20 @@ namespace Celeste.Mod.RainTools {
                 }
             ).ToList();
 
+            gateB.Add(gateB.openRoutine = new(gateB.OpenRoutine()));
+            gateB.timer = gateA.timer;
+
             if (Engine.Scene == levelA)
                 Engine.Scene = levelB;
         }
 
         private AreaKey? GetAreaKey() {
-            var areaData = AreaData.Get(SID)
-                         ?? throw new Exception($"gate cannot go to nonexistent region {SID}!");
+            var areaData = AreaData.Get(DestinationSID)
+                         ?? throw new Exception($"gate cannot go to nonexistent region {DestinationSID}!");
 
             MapData mapData = null;
-            if ((int) Mode <= areaData.Mode.Length)
-                mapData = areaData.Mode[(int) Mode]?.MapData;
+            if ((int) DestinationMode <= areaData.Mode.Length)
+                mapData = areaData.Mode[(int) DestinationMode]?.MapData;
 
             if (mapData == null)
                 throw new Exception("gate cannot go to a nonexistent side!");
@@ -179,10 +242,6 @@ namespace Celeste.Mod.RainTools {
             var dest = mapData.Levels.Where(level => level.Name == room);
             if (!dest.Any())
                 throw new Exception("no corresponding gate room on the other side!");
-
-            // var destData = new DynamicData(dest.First());
-            // if (!destData.TryGet("", out bool isGate) || !isGate)
-            //     throw new Exception("the room on the other side of this gate has no gate in it!");
 
             return areaData.ToKey();
         }
