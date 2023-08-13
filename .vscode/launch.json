@@ -22,7 +22,8 @@
       "justMyCode": false,
       "sourceFileMap": {
         "RainTools/": "${workspaceFolder}"
-      }
+      },
+      "requireExactSource": false
     },
     {
       "name": ".NET Core Attach",
