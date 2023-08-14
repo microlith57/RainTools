@@ -5,6 +5,7 @@ region_gate_activation.placements = {
   name = "trigger",
   data = {side = "Left"}
 }
+region_gate_activation.nodeLimits = {1, 1}
 region_gate_activation.fieldInformation = {
   side = {
     options = {"Left", "Right"},

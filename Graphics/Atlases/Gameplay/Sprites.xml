@@ -1,0 +1,7 @@
+<sprites>
+
+  <raintools_regiongate_icon path="objects/RainTools/RegionGate/icon">
+    <Loop id="idle" path="idle" delay="0.1" />
+  </raintools_regiongate_icon>
+
+</sprites>

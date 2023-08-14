@@ -75,21 +75,21 @@ namespace Celeste.Mod.RainTools {
                 openRoutine = null;
         }
 
-        public bool Activate(RegionGateActivationZone zone = null) {
+        public bool Activate(RegionGateActivationZone zone) {
             if (Opening || !areaKey.HasValue)
                 return false;
             if (Closing || loader != null)
                 return true;
 
-            if (zone == null) {
-                var zones = Scene.Tracker.GetEntities<RegionGateActivationZone>()
-                                         .Cast<RegionGateActivationZone>()
-                                         .Where(z => z.Facing == Facing);
-                if (!zones.Any())
-                    return false;
+            // if (zone == null) {
+            //     var zones = Scene.Tracker.GetEntities<RegionGateActivationZone>()
+            //                              .Cast<RegionGateActivationZone>()
+            //                              .Where(z => z.Facing == Facing);
+            //     if (!zones.Any())
+            //         return false;
 
-                zone = zones.First();
-            }
+            //     zone = zones.First();
+            // }
 
             Add(closeRoutine = new(CloseRoutine(zone)));
             return true;

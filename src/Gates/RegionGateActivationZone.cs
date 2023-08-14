@@ -11,7 +11,7 @@ namespace Celeste.Mod.RainTools {
         public bool FacesRight;
         public float ActivationDelay;
 
-        private Sprite sprite;
+        // private Image image;
         private float timer;
         private bool activated;
 
@@ -41,19 +41,21 @@ namespace Celeste.Mod.RainTools {
 
             ActivationDelay = data.Float("activationDelay", 1f);
 
-            Add(sprite = new(GFX.Game, data.Attr("sprite", "raintools_regiongate_icon")) {
-                Position = data.NodesOffset(offset)[0] - Position,
-                Origin = new(sprite.Width / 2f, sprite.Height / 2f)
-            });
+            // Vector2 pos = Center - Position;
 
-            Add(new CustomBloom(sprite.Render));
+            // Add(image = new(GFX.Game["objects/RainTools/RegionGate/icon"]) {
+            //     Position = pos,
+            //     Origin = new(image.Width / 2f, image.Height / 2f)
+            // });
+
+            // Add(new CustomBloom(image.Render));
         }
 
         public override void Update() {
             base.Update();
 
             // todo make this not bad
-            sprite.Color = Color.White * Calc.ClampedMap(timer / ActivationDelay, 0f, 0.8f, 1f, 0f);
+            // image.Color = Color.White * Calc.ClampedMap(timer / ActivationDelay, 0f, 0.8f, 1f, 0f);
         }
 
         public override void OnStay(Player player) {
@@ -64,7 +66,9 @@ namespace Celeste.Mod.RainTools {
             timer += Engine.DeltaTime;
 
             if (timer >= ActivationDelay) {
-                (Scene as Level).Tracker.GetEntity<RegionGate>().Activate(this);
+                var gate = (Scene as Level).Tracker.GetEntity<RegionGate>();
+
+                gate.Activate(this);
                 activated = true;
             }
         }
