@@ -59,7 +59,7 @@ namespace Celeste.Mod.RainTools {
             Vector2 nodePos = data.NodesOffset(offset)[0];
             var angle = (nodePos - pos).Angle();
 
-            Values.Add(angle, data.Float("value"));
+            Values.Add(angle, data.Float("value"), data.Attr("ease"));
         }
 
         public override void Update() {
