@@ -4,7 +4,7 @@ using MonoMod.Cil;
 using Mono.Cecil.Cil;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using MonoMod.Utils;
+using System.Linq;
 
 namespace Celeste.Mod.RainTools.Backdrops {
     [CustomBackdrop("RainTools/DisplacementParallax")]
@@ -56,9 +56,11 @@ namespace Celeste.Mod.RainTools.Backdrops {
 
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate((Scene scene) => {
-                Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
-
                 var effects = (scene as Level).Foreground.GetEach<DisplacementParallax>();
+                if (!effects.Any())
+                    return;
+
+                Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
 
                 foreach (var effect in effects)
                     if (effect.DisplacementVisible)
