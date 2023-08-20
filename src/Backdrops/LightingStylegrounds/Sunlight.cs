@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Celeste.Mod.Backdrops;
 using Monocle;
 using Celeste.Mod.RainTools.ShadowCasters;
+using System.Linq;
 
 namespace Celeste.Mod.RainTools.Backdrops {
     [CustomBackdrop("RainTools/Sunlight")]
@@ -65,6 +66,8 @@ namespace Celeste.Mod.RainTools.Backdrops {
 
             state.Draw(matrix);
 
+            DrawCustomShadows(scene, matrix);
+
             if (Blur1 > 0)
                 GaussianBlur.Blur(GameplayBuffers.TempA, GameplayBuffers.TempB, GameplayBuffers.TempA, sampleScale: Blur1);
 
@@ -78,6 +81,22 @@ namespace Celeste.Mod.RainTools.Backdrops {
             Engine.Graphics.GraphicsDevice.SetRenderTarget(target);
             Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise);
             Draw.SpriteBatch.Draw(GameplayBuffers.TempA, new Vector2(320, 180) / 2f, target.Bounds, Color.White, 0f, new Vector2(target.Width, target.Height) / 2f, 1f, SpriteEffects.None, 0f);
+            Draw.SpriteBatch.End();
+        }
+
+        private void DrawCustomShadows(Scene scene, Matrix matrix) {
+            var shadows = (scene as Level).Tracker.GetComponents<CustomShadow>()
+                                                  .Cast<CustomShadow>()
+                                                  .OrderBy(shadow => shadow.Entity.actualDepth)
+                                                  .ToList();
+            if (!shadows.Any())
+                return;
+
+            Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, matrix);
+
+            foreach (var shadow in shadows)
+                shadow.OnRenderShadow(state);
+
             Draw.SpriteBatch.End();
         }
 

@@ -27,6 +27,7 @@ namespace Celeste.Mod.RainTools {
             ModIntegration.CommunalHelper.Load();
             DecalRegistryProperties.BloomTexture.Load();
             DecalRegistryProperties.ShadowTexture.Load();
+            DecalRegistryProperties.LightTexture.Load();
             GlobalEntityAttribute.Load();
             LightingStyleground.Load();
             AltColorgrade.Load();

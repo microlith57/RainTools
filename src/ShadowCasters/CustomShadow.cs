@@ -2,7 +2,7 @@ using System;
 using Monocle;
 
 namespace Celeste.Mod.RainTools.ShadowCasters {
-    [Tracked]
+    [Tracked(true)]
     public class CustomShadow : Component {
         public Action<DirectionalLightingRenderer> OnRenderShadow;
 

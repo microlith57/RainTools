@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Monocle;
 using System.Linq;
@@ -39,8 +40,15 @@ namespace Celeste.Mod.RainTools.Backdrops {
             orig(self, scene);
 
             var level = (Level) scene;
-            var bgs = level.Foreground.GetEach<LightingStyleground>().ToList();
-            if (bgs.Count == 0)
+
+            var bgs = level.Foreground.GetEach<LightingStyleground>()
+                                      .ToList();
+
+            var lights = level.Tracker.GetComponents<ShadowCasters.CustomLight>()
+                                      .Cast<ShadowCasters.CustomLight>()
+                                      .ToList();
+
+            if (bgs.Count == 0 && lights.Count == 0)
                 return;
 
             foreach (var backdrop in bgs) {
@@ -52,6 +60,7 @@ namespace Celeste.Mod.RainTools.Backdrops {
             Engine.Graphics.GraphicsDevice.SetRenderTarget(GameplayBuffers.Light);
 
             var usingSpritebatch = false;
+
             foreach (var backdrop in bgs) {
                 if (backdrop.LightVisible) {
                     if (backdrop.UseSpritebatch)
@@ -63,9 +72,22 @@ namespace Celeste.Mod.RainTools.Backdrops {
                 }
             }
             endSpritebatch(ref usingSpritebatch);
+
+            if (lights.Count > 0) {
+                startSpritebatch(ref usingSpritebatch, Matrix.CreateTranslation(new(-level.Camera.Position, 0)));
+
+                foreach (var light in lights)
+                    light.OnRenderLight();
+
+                endSpritebatch(ref usingSpritebatch);
+            }
         }
 
         private static void startSpritebatch(ref bool usingSpritebatch) {
+            startSpritebatch(ref usingSpritebatch, Matrix.Identity);
+        }
+
+        private static void startSpritebatch(ref bool usingSpritebatch, Matrix matrix) {
             if (usingSpritebatch)
                 return;
 
@@ -74,7 +96,8 @@ namespace Celeste.Mod.RainTools.Backdrops {
                 BlendState.Additive,
                 SamplerState.LinearClamp,
                 DepthStencilState.None,
-                RasterizerState.CullCounterClockwise
+                RasterizerState.CullCounterClockwise,
+                null, matrix
             );
             usingSpritebatch = true;
         }

@@ -7,6 +7,7 @@ using System.Xml;
 namespace Celeste.Mod.RainTools.DecalRegistryProperties {
     public static class BloomTexture {
 
+        [TrackedAs(typeof(CustomBloom))]
         public class BloomImage : CustomBloom {
 
             private Color Color;
@@ -20,9 +21,7 @@ namespace Celeste.Mod.RainTools.DecalRegistryProperties {
                 Color = color;
                 Textures = textures;
 
-                OnRenderBloom = () => {
-                    RenderBloom();
-                };
+                OnRenderBloom = RenderBloom;
             }
 
             public override void Update() {
@@ -41,22 +40,22 @@ namespace Celeste.Mod.RainTools.DecalRegistryProperties {
             var color = decal.Color;
             var textures = decal.textures;
 
-            if (attrs["color"]?.Value is string s_col && !string.IsNullOrWhiteSpace(s_col))
+            if (attrs["color"]?.Value is string s_col)
                 color = Calc.HexToColor(s_col);
 
-            if (attrs["alpha"]?.Value is string s_alpha && float.TryParse(s_alpha, out float alpha))
-                color *= alpha;
+            if (attrs["alpha"]?.Value is string s_alpha)
+                color *= float.Parse(s_alpha);
 
-            if (attrs["path"]?.Value is string s_path && !string.IsNullOrWhiteSpace(s_path))
+            if (attrs["path"]?.Value is string s_path)
                 textures = GFX.Game.GetAtlasSubtextures(s_path);
 
-            if (attrs["frames"]?.Value is string s_frames && !string.IsNullOrWhiteSpace(s_frames))
+            if (attrs["frames"]?.Value is string s_frames)
                 textures = Calc.ReadCSVIntWithTricks(s_frames).Select(i => textures[i]).ToList();
 
             decal.Add(new BloomImage(color, textures));
 
             if ((attrs["replace"]?.Value ?? "false") == "true")
-                decal.textures = new();
+                decal.Color = Color.Transparent;
         }
 
         internal static void Load() {

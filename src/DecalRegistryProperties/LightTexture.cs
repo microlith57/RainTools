@@ -1,4 +1,3 @@
-using Celeste.Mod.RainTools.ShadowCasters;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System.Collections.Generic;
@@ -6,24 +5,22 @@ using System.Linq;
 using System.Xml;
 
 namespace Celeste.Mod.RainTools.DecalRegistryProperties {
-    public static class ShadowTexture {
+    public static class LightTexture {
 
-        public class ShadowImage : CustomShadow {
+        public class LightImage : ShadowCasters.CustomLight {
 
-            private float Offset;
             private Color Color;
             private List<MTexture> Textures;
             private float frame = 0f;
 
             private Decal Decal => (Decal) Entity;
 
-            public ShadowImage(Color color, List<MTexture> textures, float offset = 0f) : base((_) => { }) {
+            public LightImage(Color color, List<MTexture> textures) : base(() => { }) {
                 Active = true;
-                Offset = offset;
                 Color = color;
                 Textures = textures;
 
-                OnRenderShadow = RenderShadow;
+                OnRenderLight = RenderLight;
             }
 
             public override void Update() {
@@ -31,17 +28,16 @@ namespace Celeste.Mod.RainTools.DecalRegistryProperties {
                     frame = (frame + Decal.AnimationSpeed * Engine.DeltaTime) % Textures.Count;
             }
 
-            private void RenderShadow(DirectionalLightingRenderer state) {
+            private void RenderLight() {
                 if (Textures.Count > 0)
-                    Textures[(int) frame].DrawCentered(Decal.Position + state.Light * Offset, Color, Decal.scale);
+                    Textures[(int) frame].DrawCentered(Decal.Position, Color, Decal.scale);
             }
 
         }
 
-        public static void HandleShadowTextureDecal(Decal decal, XmlAttributeCollection attrs) {
+        public static void HandleLightTextureDecal(Decal decal, XmlAttributeCollection attrs) {
             var color = decal.Color;
             var textures = decal.textures;
-            var offset = 0f;
 
             if (attrs["color"]?.Value is string s_col)
                 color = Calc.HexToColor(s_col);
@@ -49,23 +45,20 @@ namespace Celeste.Mod.RainTools.DecalRegistryProperties {
             if (attrs["alpha"]?.Value is string s_alpha)
                 color *= float.Parse(s_alpha);
 
-            if (attrs["offset"]?.Value is string s_offset)
-                offset = float.Parse(s_offset);
-
             if (attrs["path"]?.Value is string s_path)
                 textures = GFX.Game.GetAtlasSubtextures(s_path);
 
             if (attrs["frames"]?.Value is string s_frames)
                 textures = Calc.ReadCSVIntWithTricks(s_frames).Select(i => textures[i]).ToList();
 
-            decal.Add(new ShadowImage(color, textures, offset));
+            decal.Add(new LightImage(color, textures));
 
             if ((attrs["replace"]?.Value ?? "false") == "true")
                 decal.Color = Color.Transparent;
         }
 
         internal static void Load() {
-            DecalRegistry.AddPropertyHandler("raintools_shadow_texture", HandleShadowTextureDecal);
+            DecalRegistry.AddPropertyHandler("raintools_light_texture", HandleLightTextureDecal);
         }
 
     }
