@@ -18,9 +18,9 @@ namespace Celeste.Mod.RainTools.Backdrops {
             public float Rotation;
 
             public void Set(MTexture texture,
-                        Vector2 position,
-                        Vector2 minVelocity, Vector2 maxVelocity,
-                        float minScaleVelocity, float maxScaleVelocity) {
+                            Vector2 position,
+                            Vector2 minVelocity, Vector2 maxVelocity,
+                            float minScaleVelocity, float maxScaleVelocity) {
 
                 Texture = texture;
 
@@ -134,9 +134,8 @@ namespace Celeste.Mod.RainTools.Backdrops {
             if (FadeAlphaMultiplier <= 0f)
                 return;
 
-            foreach (var blob in Blobs) {
+            foreach (var blob in Blobs)
                 blob.Render(camera, FadeAlphaMultiplier, Alpha);
-            }
         }
 
     }
