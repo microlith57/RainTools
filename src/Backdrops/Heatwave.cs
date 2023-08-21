@@ -66,10 +66,12 @@ namespace Celeste.Mod.RainTools.Backdrops {
 
         public Vector2 MinVelocity, MaxVelocity;
         public float MinScaleVelocity, MaxScaleVelocity;
+        public float ScaleAcceleration;
 
         public float Alpha = 15;
 
         private bool firstFrame = true;
+        private bool anyBlobs = true;
 
         public Heatwave(BinaryPacker.Element data) {
 
@@ -78,21 +80,22 @@ namespace Celeste.Mod.RainTools.Backdrops {
 
             Textures = GFX.Game.GetAtlasSubtextures(data.Attr("texture"));
 
-            MinVelocity = new(data.AttrFloat("minVelX", -1f), data.AttrFloat("minVelY", 1f));
-            MaxVelocity = new(data.AttrFloat("maxVelX", -10f), data.AttrFloat("maxVelY", -20f));
+            MinVelocity = new(data.AttrFloat("minVelX", -1f), data.AttrFloat("minVelY", -5f));
+            MaxVelocity = new(data.AttrFloat("maxVelX", +1f), data.AttrFloat("maxVelY", -20f));
             MinScaleVelocity = data.AttrFloat("minScaleVel", 0.05f);
             MaxScaleVelocity = data.AttrFloat("minScaleVel", 0.3f);
+            ScaleAcceleration = data.AttrFloat("scaleAcceleration", -0.001f);
 
             Scroll = new(data.AttrFloat("scrollx", 1f), data.AttrFloat("scrolly", 1f));
 
-            Alpha = data.AttrFloat("alpha", 15f / 255f);
+            Alpha = data.AttrFloat("distortAlpha", 15f / 255f);
 
             for (int i = 0; i < Blobs.Length; i++) {
                 var texture = Calc.Random.Choose(Textures);
                 var position = Calc.Random.Range(Vector2.Zero, SIZE) - OFFSET;
 
                 Blobs[i] = new();
-                Blobs[i].Set(texture, position, MinVelocity, MaxVelocity, MinScaleVelocity, MaxScaleVelocity);
+                Blobs[i].Set(texture, position, MinVelocity, MaxVelocity, 0, 0);
             }
 
         }
@@ -100,37 +103,42 @@ namespace Celeste.Mod.RainTools.Backdrops {
         public override void Update(Scene scene) {
             base.Update(scene);
 
-            DisplacementVisible = Visible;
-            Visible = false;
+            var target = Visible ? TargetCount : 0;
 
-            if (FadeAlphaMultiplier <= 0f)
+            if ((firstFrame && TargetCount == 0) || FadeAlphaMultiplier <= 0f || (target == 0 && !anyBlobs)) {
+                DisplacementVisible = Visible = false;
                 return;
+            }
+            firstFrame = false;
 
-            List<int> toRefresh = new();
+            List<int> canRefresh = new();
 
             for (int i = 0; i < Blobs.Length; i++) {
-                Blobs[i].Update(-0.001f, firstFrame ? Engine.DeltaTime * 60f : Engine.DeltaTime);
+                Blobs[i].Update(ScaleAcceleration, firstFrame ? Engine.DeltaTime * 60f : Engine.DeltaTime);
 
                 if (Blobs[i].Scale <= 0)
-                    toRefresh.Add(i);
+                    canRefresh.Add(i);
             }
 
-            var numToRefresh = TargetCount - (Blobs.Length - toRefresh.Count);
+            var numToRefresh = target - (Blobs.Length - canRefresh.Count);
             if (numToRefresh > 0)
                 for (int i = 0; i < numToRefresh; i++) {
                     var texture = Calc.Random.Choose(Textures);
                     var position = Calc.Random.Range(Vector2.Zero, SIZE) - OFFSET;
 
-                    Blobs[toRefresh[i]].Set(texture, position, MinVelocity, MaxVelocity, MinScaleVelocity, MaxScaleVelocity);
+                    Blobs[canRefresh[i]].Set(texture, position, MinVelocity, MaxVelocity, MinScaleVelocity, MaxScaleVelocity);
                 }
 
-            firstFrame = false;
+            anyBlobs = !(numToRefresh == 0 && canRefresh.Count == Blobs.Length);
+
+            DisplacementVisible = Visible || anyBlobs;
+            Visible = false;
         }
 
         public void RenderDisplacement(Scene scene) {
             var camera = (scene as Level).Camera.Position;
 
-            if (FadeAlphaMultiplier <= 0f)
+            if (!anyBlobs || FadeAlphaMultiplier <= 0f)
                 return;
 
             foreach (var blob in Blobs)
