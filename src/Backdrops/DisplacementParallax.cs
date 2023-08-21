@@ -1,16 +1,11 @@
 using Monocle;
 using Celeste.Mod.Backdrops;
-using MonoMod.Cil;
-using Mono.Cecil.Cil;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using System.Linq;
 
 namespace Celeste.Mod.RainTools.Backdrops {
     [CustomBackdrop("RainTools/DisplacementParallax")]
-    public class DisplacementParallax : Parallax {
+    public class DisplacementParallax : Parallax, IDisplacementStyleground {
 
-        public bool DisplacementVisible;
+        public bool DisplacementVisible { get; private set; } = false;
 
         public DisplacementParallax(MTexture texture) : base(texture) { }
 
@@ -38,39 +33,9 @@ namespace Celeste.Mod.RainTools.Backdrops {
             Visible = false;
         }
 
-        #region hook
-
-        internal static void Load() {
-            IL.Celeste.DisplacementRenderer.BeforeRender += modBeforeRenderDisplacement;
+        public void RenderDisplacement(Scene scene) {
+            Render(scene);
         }
-
-        internal static void Unload() {
-            IL.Celeste.DisplacementRenderer.BeforeRender -= modBeforeRenderDisplacement;
-        }
-
-        private static void modBeforeRenderDisplacement(ILContext context) {
-            ILCursor cursor = new(context);
-
-            cursor.GotoNext(MoveType.Before, i => i.MatchCallOrCallvirt(out var m)
-                                               && m.FullName.EndsWith("Monocle.Draw::get_SpriteBatch()"));
-
-            cursor.Emit(OpCodes.Ldarg_1);
-            cursor.EmitDelegate((Scene scene) => {
-                var effects = (scene as Level).Foreground.GetEach<DisplacementParallax>();
-                if (!effects.Any())
-                    return;
-
-                Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
-
-                foreach (var effect in effects)
-                    if (effect.DisplacementVisible)
-                        effect.Render(scene);
-
-                Draw.SpriteBatch.End();
-            });
-        }
-
-        #endregion
 
     }
 }

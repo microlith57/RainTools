@@ -31,14 +31,14 @@ namespace Celeste.Mod.RainTools {
             GlobalEntityAttribute.Load();
             LightingStyleground.Load();
             AltColorgrade.Load();
-            DisplacementParallax.Load();
+            Hooks.DisplacementStyleground.Load();
         }
 
         public override void Unload() {
             GlobalEntityAttribute.Unload();
             LightingStyleground.Unload();
             AltColorgrade.Unload();
-            DisplacementParallax.Unload();
+            Hooks.DisplacementStyleground.Unload();
         }
 
     }
