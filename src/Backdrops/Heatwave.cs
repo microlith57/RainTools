@@ -134,7 +134,7 @@ namespace Celeste.Mod.RainTools.Backdrops {
                 return;
 
             foreach (var blob in Blobs)
-                blob.Render(camera, FadeAlphaMultiplier, Alpha);
+                blob.Render(camera, FadeAlphaMultiplier * (Color.A / 255f), Alpha);
         }
 
     }
