@@ -1,5 +1,4 @@
-﻿using Celeste.Mod.RainTools.Backdrops;
-using System;
+﻿using System;
 
 namespace Celeste.Mod.RainTools {
     public class RainToolsModule : EverestModule {
@@ -28,17 +27,20 @@ namespace Celeste.Mod.RainTools {
             DecalRegistryProperties.BloomTexture.Load();
             DecalRegistryProperties.ShadowTexture.Load();
             DecalRegistryProperties.LightTexture.Load();
+
+            Hooks.hook_Level.Load();
+            Hooks.hook_DisplacementRenderer.Load();
+            Hooks.hook_LightingRenderer.Load();
+
             GlobalEntityAttribute.Load();
-            LightingStyleground.Load();
-            AltColorgrade.Load();
-            Hooks.DisplacementStyleground.Load();
         }
 
         public override void Unload() {
+            Hooks.hook_Level.Unload();
+            Hooks.hook_DisplacementRenderer.Unload();
+            Hooks.hook_LightingRenderer.Unload();
+
             GlobalEntityAttribute.Unload();
-            LightingStyleground.Unload();
-            AltColorgrade.Unload();
-            Hooks.DisplacementStyleground.Unload();
         }
 
     }

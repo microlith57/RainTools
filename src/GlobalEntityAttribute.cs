@@ -7,6 +7,9 @@ using System.Reflection;
 using System.Linq;
 using MonoMod.Utils;
 
+// todo refactor
+// todo pr attribute into everest
+
 namespace Celeste.Mod.RainTools {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class GlobalEntityAttribute : Attribute {
