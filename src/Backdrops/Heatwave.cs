@@ -2,7 +2,6 @@ using Monocle;
 using Celeste.Mod.Backdrops;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace Celeste.Mod.RainTools.Backdrops {
     [CustomBackdrop("RainTools/Heatwave")]
