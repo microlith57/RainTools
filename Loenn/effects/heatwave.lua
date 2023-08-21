@@ -12,6 +12,7 @@ heatwave.defaultData = {
   maxVelY = -20,
   minScaleVel = 0.05,
   minScaleVel = 0.3,
+  scaleAcceleration = -0.001,
   scrollx = 1,
   scrolly = 1,
   distortAlpha = 0.05
