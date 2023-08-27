@@ -24,9 +24,14 @@ namespace Celeste.Mod.RainTools {
 
         public override void Load() {
             ModIntegration.CommunalHelper.Load();
+
             DecalRegistryProperties.BloomTexture.Load();
             DecalRegistryProperties.ShadowTexture.Load();
             DecalRegistryProperties.LightTexture.Load();
+
+            DecalRegistryProperties.PutImageHere.Load();
+            DecalRegistryProperties.AnotherImage.Load();
+            DecalRegistryProperties.Override.Load();
 
             Hooks.hook_Level.Load();
             Hooks.hook_DisplacementRenderer.Load();
