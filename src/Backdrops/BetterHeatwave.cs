@@ -19,9 +19,7 @@ namespace Celeste.Mod.RainTools.Backdrops {
                 return new();
             }
 
-            public static void Recycle(Blob blob) {
-                pool.Enqueue(blob);
-            }
+            public static void Recycle(Blob blob) => pool.Enqueue(blob);
 
             public MTexture Texture;
             public Vector2 Position;

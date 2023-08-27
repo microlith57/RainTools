@@ -12,7 +12,7 @@ namespace Celeste.Mod.RainTools.Backdrops {
         public const int DOWNRES_FACTOR = 2;
         public static Vector2 RENDER_OFFSET = new Vector2(320, 180) / 2f - new Vector2(320, 180) / (2f * DOWNRES_FACTOR);
 
-        public float Angle;
+        public float Angle { get; set; } = 0f;
         public float Blur1, Blur2;
 
         private DirectionalLightingRenderer state;
@@ -109,12 +109,5 @@ namespace Celeste.Mod.RainTools.Backdrops {
             Draw.SpriteBatch.Draw(target, tl, target.Bounds, Color * FadeAlphaMultiplier, 0f, Vector2.Zero, DOWNRES_FACTOR, SpriteEffects.None, 0f);
         }
 
-        public float GetAngle() {
-            return Angle;
-        }
-
-        public void SetAngle(float angle) {
-            Angle = angle;
-        }
     }
 }

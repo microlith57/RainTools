@@ -40,7 +40,7 @@ namespace Celeste.Mod.RainTools {
             float angle = Calc.WrapAngle(Cycles.GetAngle(CycleTag) * Multiplier + Offset);
 
             foreach (var backdrop in bgs.Union(fgs)) {
-                backdrop.SetAngle(angle);
+                backdrop.Angle = angle;
             }
         }
 

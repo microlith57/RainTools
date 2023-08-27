@@ -102,32 +102,27 @@ namespace Celeste.Mod.RainTools {
             public Blend(T val) : this(val, val, 0f) { }
         }
 
-        public override Blend Convert(T val) {
-            return new(val);
-        }
-
-        public override Blend Lerp(T a, T b, float fac) {
-            return new(a, b, fac);
-        }
+        public override Blend Convert(T val) => new(val);
+        public override Blend Lerp(T a, T b, float fac) => new(a, b, fac);
 
     }
 
     public abstract class SimpleCircularInterpolator<T> : CircularInterpolator<T, T> {
-        public override T Convert(T val) {
-            return val;
-        }
+
+        public override T Convert(T val) => val;
+
     }
 
     public class CircularFloatInterpolator : SimpleCircularInterpolator<float> {
-        public override float Lerp(float a, float b, float fac) {
-            return MathHelper.Lerp(a, b, fac);
-        }
+
+        public override float Lerp(float a, float b, float fac) => MathHelper.Lerp(a, b, fac);
+
     }
 
     public class CircularColorInterpolator : SimpleCircularInterpolator<Color> {
-        public override Color Lerp(Color a, Color b, float fac) {
-            return Color.Lerp(a, b, fac);
-        }
+
+        public override Color Lerp(Color a, Color b, float fac) => Color.Lerp(a, b, fac);
+
     }
 
 }

@@ -12,7 +12,7 @@ namespace Celeste.Mod.RainTools.Backdrops {
         private const float DIAGONAL = 370f;
 
         public Color[] Colors = new Color[] { };
-        public float Angle;
+        public float Angle { get; set; } = 0f;
         public float GradientLength;
         public bool ExtendEnds = false;
 
@@ -166,12 +166,5 @@ namespace Celeste.Mod.RainTools.Backdrops {
             return tris;
         }
 
-        public float GetAngle() {
-            return Angle;
-        }
-
-        public void SetAngle(float angle) {
-            Angle = angle;
-        }
     }
 }

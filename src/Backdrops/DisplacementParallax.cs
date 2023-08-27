@@ -33,9 +33,7 @@ namespace Celeste.Mod.RainTools.Backdrops {
             Visible = false;
         }
 
-        public void RenderDisplacement(Scene scene) {
-            Render(scene);
-        }
+        public void RenderDisplacement(Scene scene) => Render(scene);
 
     }
 }
