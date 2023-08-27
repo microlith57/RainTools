@@ -1,6 +1,6 @@
 local heatwave = {}
 
-heatwave.name = "RainTools/Heatwave"
+heatwave.name = "RainTools/BetterHeatwave"
 heatwave.canForeground = true
 heatwave.canBackground = false
 heatwave.defaultData = {
@@ -11,10 +11,8 @@ heatwave.defaultData = {
   maxVelX = -10,
   maxVelY = -20,
   minScaleVel = 0.05,
-  minScaleVel = 0.3,
+  maxScaleVel = 0.3,
   scaleAcceleration = -0.001,
-  scrollx = 1,
-  scrolly = 1,
   distortAlpha = 0.05
 }
 
