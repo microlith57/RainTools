@@ -92,6 +92,9 @@
         <Reference Include="lib\FrostTempleHelper.dll">
             <Private>false</Private>
         </Reference>
+        <Reference Include="lib\Procedurline.dll">
+            <Private>false</Private>
+        </Reference>
     </ItemGroup>
 
     <Target Name="CopyFiles" AfterTargets="Build">
