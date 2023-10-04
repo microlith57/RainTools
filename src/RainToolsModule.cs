@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Celeste.Mod.RainTools {
     public class RainToolsModule : EverestModule {
@@ -29,6 +29,7 @@ namespace Celeste.Mod.RainTools {
             DecalRegistryProperties.ShadowTexture.Load();
             DecalRegistryProperties.LightTexture.Load();
 
+            DecalRegistryProperties.RotationSpeed.Load();
             DecalRegistryProperties.PutImageHere.Load();
             DecalRegistryProperties.AnotherImage.Load();
             DecalRegistryProperties.Override.Load();
