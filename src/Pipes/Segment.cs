@@ -4,13 +4,20 @@ using Monocle;
 
 namespace Celeste.Mod.RainTools.Pipes {
     [CustomEntity("RainTools/PipeSegment")]
-    public class Segment(EntityData data, Vector2 offset) : Entity(data.Position + offset), IPart {
+    [Tracked(true)]
+    public class Segment : Entity, IPart {
+
+        public Segment(EntityData data, Vector2 offset) : base(data.Position + offset) {
+            Points = data.NodesOffset(-data.Position);
+        }
 
         public Pipe Pipe { get; set; }
 
-        public Vector2[] Points = data.NodesOffset(-data.Position);
+        public Vector2[] Points;
+        Vector2 IPart.Position => Position;
         public Vector2 EndPosition => Points[^1] + Position;
 
+        public virtual float Offset { get; set; }
         public float Length {
             get {
                 var length = Points[0].Length();
@@ -22,11 +29,8 @@ namespace Celeste.Mod.RainTools.Pipes {
             }
         }
 
-        public float StartDistance;
-        public float EndDistance;
-
-        public override void Added(Scene scene) {
-            base.Added(scene);
+        public override void Awake(Scene scene) {
+            base.Awake(scene);
 
             var level = Scene as Level;
             var controller = Controller.AddIfAbsent(level);
@@ -45,6 +49,7 @@ namespace Celeste.Mod.RainTools.Pipes {
             else
                 col = Color.Purple;
 
+            Draw.Line(Position, Points[0] + Position, col * 0.5f);
             for (int i = 1; i < Points.Length; i++)
                 Draw.Line(Points[i - 1] + Position, Points[i] + Position, col * 0.5f);
 

@@ -1,17 +1,16 @@
-using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Celeste.Mod.RainTools.Pipes {
-    [CustomEntity("RainTools/PipeController")]
+
+    // [CustomEntity("RainTools/PipeController")]
+    [Tracked]
     public class Controller : Entity {
 
-        public List<Pipe> Pipes;
-
-        private Dictionary<Vector2, Tuple<IPart, IPart>> graph;
+        public IEnumerable<Pipe> Pipes => Components.Where(p => p is Pipe).Cast<Pipe>();
+        private Dictionary<Vector2, IPart> discontiuities = new();
 
         #region constructors
 
@@ -22,27 +21,32 @@ namespace Celeste.Mod.RainTools.Pipes {
 
         public Controller(EntityData data) : this() => SetData(data);
 
-        public static Controller AddIfAbsent(Level level) {
-            var instance = level.Tracker.GetEntity<Controller>();
-
-            if (instance == null)
-                level.Add(instance = new());
-
-            return instance;
+        private void SetData(EntityData data) {
+            // todo
         }
 
         public static Controller Load(Level level, LevelData levelData, Vector2 offset, EntityData data) {
             var existing = level.Tracker.GetEntity<Controller>();
 
-            if (existing == null)
-                return new Controller(data);
+            if (existing == null) {
+                Controller instance = new(data);
+                level.Tracker.Entities[typeof(Controller)].Add(instance);
+                return instance;
+            }
 
             existing.SetData(data);
             return null;
         }
 
-        private void SetData(EntityData data) {
-            // todo
+        public static Controller AddIfAbsent(Level level) {
+            var instance = level.Tracker.GetEntity<Controller>();
+
+            if (instance == null) {
+                level.Add(instance = new());
+                level.Tracker.Entities[typeof(Controller)].Add(instance);
+            }
+
+            return instance;
         }
 
         #endregion
@@ -52,83 +56,76 @@ namespace Celeste.Mod.RainTools.Pipes {
         public void Add(Endpoint endpoint) {
             var pos = endpoint.Position;
 
-            if (!graph.ContainsKey(pos))
-                graph[pos] = new(endpoint, null);
-            else if (graph[pos].Item2 != null)
-                if (graph[pos].Item1 is not Endpoint)
-                    graph[pos] = new(graph[pos].Item1, endpoint);
-                else
-                    throw new Exception("oh no");
-            else
-                throw new Exception("oh no");
+            if (discontiuities.TryGetValue(pos, out var adj)) {
+                discontiuities.Remove(pos);
+
+                var pipe = adj.Pipe;
+                bool addToEnd = false;
+
+                if (adj == pipe.Parts[^1])
+                    addToEnd = true;
+
+                pipe.Add(endpoint, addToEnd);
+            } else {
+                Add(new Pipe(endpoint));
+                discontiuities.Add(pos, endpoint);
+            }
         }
 
         public void Add(Segment segment) {
             var start = segment.Position;
             var end = segment.EndPosition;
 
-            if (start == end)
-                throw new Exception("oh no");
+            bool startConnected = false, endConnected = false;
+            bool addToEndOfStart = false, addToEndOfEnd = false;
 
-            if (!graph.ContainsKey(start))
-                graph[start] = new(segment, null);
-            else if (graph[start].Item2 == null)
-                graph[start] = new(graph[start].Item1, segment);
-            else
-                throw new Exception("oh no");
+            if (start == end) {
+                Logger.Log(LogLevel.Verbose, nameof(RainToolsModule),
+                           $"segment from ({start}) to ({end}) failed to join a pipe: loop");
+                Add(new Pipe(segment));
+                return;
+            }
 
-            if (!graph.ContainsKey(end))
-                graph[end] = new(segment, null);
-            else if (graph[end].Item2 == null)
-                graph[end] = new(graph[end].Item1, segment);
-            else
-                throw new Exception("oh no");
-        }
+            if (discontiuities.TryGetValue(start, out var adj_a)) {
+                discontiuities.Remove(start);
+                startConnected = true;
 
-        #endregion
+                var pipe = adj_a.Pipe;
 
-        #region awake
+                if (adj_a == pipe.Parts[^1])
+                    addToEndOfStart = true;
 
-        public override void Awake(Scene scene) {
-            base.Awake(scene);
+                pipe.Add(segment, addToEndOfStart);
+            } else {
+                discontiuities.Add(start, segment);
+            }
 
-            var endpoints = scene.Tracker.GetEntities<Endpoint>().Cast<Endpoint>().ToList();
-            var segments = scene.Tracker.GetEntities<Segment>().Cast<Segment>().ToList();
+            if (discontiuities.TryGetValue(end, out var adj_b)) {
+                discontiuities.Remove(end);
+                endConnected = true;
 
-            Pipes = [];
-
-            while (endpoints.Count > 0) {
-                var start = endpoints[^1];
-                var pipe = new Pipe() { Start = start };
-                start.Pipe = pipe;
-                endpoints.RemoveAt(endpoints.Count - 1);
-
-                IPart part = pipe.Start;
-                while (true) {
-                    var tup = graph[part.EndPosition];
-                    var next = (tup.Item2 == part) ? tup.Item1 : tup.Item2;
-                    if (next == part || next == null)
-                        throw new NotImplementedException("oh no");
-
-                    next.Pipe = pipe;
-
-                    if (next is Segment seg) {
-                        pipe.Segments.Add(seg);
-                        seg.StartDistance = pipe.TotalLength;
-                        segments.Remove(seg);
-                    } else if (next is Endpoint end) {
-                        pipe.End = end;
-                        endpoints.Remove(end);
-                        break;
-                    } else
-                        throw new NotImplementedException("should be unreachable!");
-
-                    pipe.TotalLength += next.Length;
-                    part = next;
+                var pipe = adj_b.Pipe;
+                if (segment.Pipe == pipe) {
+                    Logger.Log(LogLevel.Verbose, nameof(RainToolsModule),
+                               $"segment from ({start}) to ({end}) formed a loop");
+                    return;
                 }
 
-                Add(pipe);
+                if (adj_b == pipe.Parts[^1])
+                    addToEndOfEnd = true;
+
+                if (startConnected) {
+                    segment.Pipe.AddFrom(pipe, addToEndOfStart, addToEndOfEnd);
+                    Remove(pipe);
+                } else {
+                    pipe.Add(segment, addToEndOfEnd);
+                }
+            } else {
+                discontiuities.Add(end, segment);
             }
+
+            if (!startConnected && !endConnected)
+                Add(new Pipe(segment));
         }
 
         #endregion
