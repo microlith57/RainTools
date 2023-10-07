@@ -3,6 +3,8 @@ local utils = require("utils")
 local drawableSprite = require("structs.drawable_sprite")
 local drawableLine = require("structs.drawable_line")
 
+local easings = mods.requireFromPlugin("libraries.easings")
+
 local colorgrade_cycle_controller = {}
 
 colorgrade_cycle_controller.name = "RainTools/ColorgradeCycleController"
