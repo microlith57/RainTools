@@ -1,7 +1,5 @@
-using Microsoft.Xna.Framework;
 using Monocle;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Celeste.Mod.RainTools.Pipes {

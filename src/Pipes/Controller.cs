@@ -1,5 +1,7 @@
 using Microsoft.Xna.Framework;
 using Monocle;
+using MonoMod.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,8 +13,6 @@ namespace Celeste.Mod.RainTools.Pipes {
 
         public IEnumerable<Pipe> Pipes => Components.Where(p => p is Pipe).Cast<Pipe>();
         private Dictionary<Vector2, IPart> discontiuities = new();
-
-        #region constructors
 
         public Controller() {
             Depth = -Depths.Top;
@@ -26,34 +26,45 @@ namespace Celeste.Mod.RainTools.Pipes {
         }
 
         public static Controller Load(Level level, LevelData levelData, Vector2 offset, EntityData data) {
-            var existing = level.Tracker.GetEntity<Controller>();
+            var instance = level.Tracker.GetEntity<Controller>();
 
-            if (existing == null) {
-                Controller instance = new(data);
-                level.Tracker.Entities[typeof(Controller)].Add(instance);
-                return instance;
+            if (instance != null) {
+                instance.SetData(data);
+                return null;
             }
 
-            existing.SetData(data);
-            return null;
+            var dyndata = DynamicData.For(level);
+
+            instance = dyndata.Get<Controller>("raintools_pipe_controller");
+
+            if (instance != null) {
+                instance.SetData(data);
+                return null;
+            }
+
+            instance = new Controller(data);
+            dyndata.Set("raintools_pipe_controller", instance);
+            return instance;
         }
 
         public static Controller AddIfAbsent(Level level) {
             var instance = level.Tracker.GetEntity<Controller>();
+            if (instance != null)
+                return instance;
 
-            if (instance == null) {
-                level.Add(instance = new());
-                level.Tracker.Entities[typeof(Controller)].Add(instance);
-            }
+            var dyndata = DynamicData.For(level);
+
+            instance = dyndata.Get<Controller>("raintools_pipe_controller");
+            if (instance != null)
+                return instance;
+
+            level.Add(instance = new());
+            dyndata.Set("raintools_pipe_controller", instance);
 
             return instance;
         }
 
-        #endregion
-
-        #region add to level
-
-        public void Add(Endpoint endpoint) {
+        public void AddPart(Endpoint endpoint) {
             var pos = endpoint.Position;
 
             if (discontiuities.TryGetValue(pos, out var adj)) {
@@ -72,17 +83,17 @@ namespace Celeste.Mod.RainTools.Pipes {
             }
         }
 
-        public void Add(Segment segment) {
-            var start = segment.Position;
-            var end = segment.EndPosition;
+        public void AddPart(Edge edge) {
+            var start = edge.Position;
+            var end = edge.EndPosition;
 
             bool startConnected = false, endConnected = false;
             bool addToEndOfStart = false, addToEndOfEnd = false;
 
             if (start == end) {
                 Logger.Log(LogLevel.Verbose, nameof(RainToolsModule),
-                           $"segment from ({start}) to ({end}) failed to join a pipe: loop");
-                Add(new Pipe(segment));
+                           $"edge from ({start}) to ({end}) failed to join a pipe: loop");
+                Add(new Pipe(edge));
                 return;
             }
 
@@ -95,9 +106,9 @@ namespace Celeste.Mod.RainTools.Pipes {
                 if (adj_a == pipe.Parts[^1])
                     addToEndOfStart = true;
 
-                pipe.Add(segment, addToEndOfStart);
+                pipe.Add(edge, addToEndOfStart);
             } else {
-                discontiuities.Add(start, segment);
+                discontiuities.Add(start, edge);
             }
 
             if (discontiuities.TryGetValue(end, out var adj_b)) {
@@ -105,9 +116,9 @@ namespace Celeste.Mod.RainTools.Pipes {
                 endConnected = true;
 
                 var pipe = adj_b.Pipe;
-                if (segment.Pipe == pipe) {
+                if (edge.Pipe == pipe) {
                     Logger.Log(LogLevel.Verbose, nameof(RainToolsModule),
-                               $"segment from ({start}) to ({end}) formed a loop");
+                               $"edge from ({start}) to ({end}) formed a loop");
                     return;
                 }
 
@@ -115,20 +126,18 @@ namespace Celeste.Mod.RainTools.Pipes {
                     addToEndOfEnd = true;
 
                 if (startConnected) {
-                    segment.Pipe.AddFrom(pipe, addToEndOfStart, addToEndOfEnd);
+                    edge.Pipe.AddFrom(pipe, addToEndOfStart, addToEndOfEnd);
                     Remove(pipe);
                 } else {
-                    pipe.Add(segment, addToEndOfEnd);
+                    pipe.Add(edge, addToEndOfEnd);
                 }
             } else {
-                discontiuities.Add(end, segment);
+                discontiuities.Add(end, edge);
             }
 
             if (!startConnected && !endConnected)
-                Add(new Pipe(segment));
+                Add(new Pipe(edge));
         }
-
-        #endregion
 
     }
 }
