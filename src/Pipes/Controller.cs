@@ -65,7 +65,7 @@ namespace Celeste.Mod.RainTools.Pipes {
         }
 
         public void AddPart(Endpoint endpoint) {
-            var pos = endpoint.Position;
+            var pos = endpoint.AbsPosition;
 
             if (discontiuities.TryGetValue(pos, out var adj)) {
                 discontiuities.Remove(pos);
@@ -84,7 +84,7 @@ namespace Celeste.Mod.RainTools.Pipes {
         }
 
         public void AddPart(Edge edge) {
-            var start = edge.Position;
+            var start = edge.AbsPosition;
             var end = edge.EndPosition;
 
             bool startConnected = false, endConnected = false;

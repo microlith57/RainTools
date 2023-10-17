@@ -1,7 +1,6 @@
 using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
-using System.Runtime.CompilerServices;
 
 namespace Celeste.Mod.RainTools.Pipes {
     [CustomEntity("RainTools/PipeEntrance")]
@@ -18,13 +17,18 @@ namespace Celeste.Mod.RainTools.Pipes {
         public Entrance(EntityData data, Vector2 offset) : base(data.Position + offset) {
             Direction = data.Enum<Directions>("direction");
 
-            Add(Endpoint = new(Vector2.Zero));
+            Add(Endpoint = new(Vector2.Zero) {
+                OnVesselArrival = Exited
+            });
 
             Collider = new Hitbox(10, 10, -1, -1);
         }
 
         public override void Update() {
             base.Update();
+
+            if (!Endpoint.Pipe.Valid)
+                return;
 
             var level = Scene as Level;
             var player = level.Tracker.GetEntity<Player>();
@@ -55,6 +59,18 @@ namespace Celeste.Mod.RainTools.Pipes {
         private void Entered(Player player) {
             player.StateMachine.State = Player.StDummy;
             player.StateMachine.Locked = true;
+            player.Visible = false;
+
+            Endpoint.AddVessel(128f, 16f, player.Hair.Color);
+        }
+
+        private void Exited(Pipe.Vessel vessel) {
+            var player = Scene.Tracker.GetEntity<Player>();
+
+            player.StateMachine.Locked = false;
+            player.StateMachine.State = Player.StNormal;
+            player.Visible = true;
+            player.Position = Position + new Vector2(4f, 8f);
         }
 
         public override void Render() {

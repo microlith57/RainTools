@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Monocle;
+using System;
 
 namespace Celeste.Mod.RainTools.Pipes {
     [Tracked]
@@ -8,12 +9,15 @@ namespace Celeste.Mod.RainTools.Pipes {
         public Pipe Pipe { get; set; }
 
         public Vector2 Position = Vector2.Zero;
+        public Vector2 AbsPosition => Entity.Position + Position;
 
-        Vector2 IPart.Position => Entity.Position + Position;
-        public Vector2 EndPosition => Entity.Position + Position;
+        Vector2 IPart.Position => AbsPosition;
+        public Vector2 EndPosition => AbsPosition;
 
         public virtual float Offset { get; set; }
         public virtual float Length => 0f;
+
+        public Action<Pipe.Vessel> OnVesselArrival;
 
         public Endpoint(Vector2 relPosition) : base(false, false) {
             Position = relPosition;
@@ -38,6 +42,14 @@ namespace Celeste.Mod.RainTools.Pipes {
                 col = Color.Purple;
 
             Draw.Rect(Position - Vector2.One, 3, 3, col);
+        }
+
+        public void AddVessel(float velocity, float length, Color color) {
+            Pipe.Add(new Pipe.Vessel(Offset, Offset > 0 ? -velocity : velocity, length, color));
+        }
+
+        public void VesselArrived(Pipe.Vessel vessel) {
+            OnVesselArrival?.Invoke(vessel);
         }
 
     }

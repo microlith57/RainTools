@@ -1,4 +1,6 @@
+using Microsoft.Xna.Framework;
 using Monocle;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,11 +8,46 @@ namespace Celeste.Mod.RainTools.Pipes {
     [Tracked]
     public class Pipe : Component {
 
-        // public struct Pulse {
-        //     public float Distance;
-        //     public readonly float Velocity;
-        //     public readonly Color Color;
-        // }
+        public class Vessel {
+            public float Offset;
+            public float Velocity;
+            public float Length;
+            public Color Color;
+
+            public Vessel(float offset, float velocity, float length, Color color) {
+                Offset = offset;
+                Velocity = velocity;
+                Length = length;
+                Color = color;
+            }
+
+            public Tuple<float, float> Endpoints {
+                get {
+                    if (Velocity >= 0) {
+                        return new(Offset - Length, Offset);
+                    } else {
+                        return new(Offset, Offset + Length);
+                    }
+                }
+            }
+
+            public bool Arrived(float pipeLength) {
+                if (Velocity >= 0) {
+                    return Offset >= pipeLength;
+                } else {
+                    return Offset <= 0;
+                }
+            }
+
+            public bool Touches(float point) {
+                var endpoints = Endpoints;
+                return point >= endpoints.Item1 && point <= endpoints.Item2;
+            }
+
+            public void Update() {
+                Offset += Velocity * Engine.DeltaTime;
+            }
+        }
 
         // public struct Flash {
         //     public float Factor;
@@ -23,16 +60,14 @@ namespace Celeste.Mod.RainTools.Pipes {
         public Endpoint Start => Parts.Count > 0 ? (Parts[0] as Endpoint) : null;
         public Endpoint End => Parts.Count > 0 ? (Parts[^1] as Endpoint) : null;
 
-        public bool Valid => Start != null && End != null;
+        public bool Valid => Start != null && End != null && Start != End;
 
+        private List<Vessel> vessels = new();
         // private List<Flash> flashes = new();
-        // public ReadOnlyCollection<Flash> Flashes => flashes.AsReadOnly();
-        // private List<Pulse> pulses = new();
-        // public ReadOnlyCollection<Pulse> Pulses => pulses.AsReadOnly();
 
         public float TotalLength = 0f;
 
-        public Pipe() : base(false, false) { }
+        public Pipe() : base(true, false) { }
 
         public Pipe(IPart part) : this() => Add(part, false);
 
@@ -60,11 +95,11 @@ namespace Celeste.Mod.RainTools.Pipes {
         }
 
         public override void EntityAwake() {
-            float pos = 0f;
+            TotalLength = 0f;
 
             foreach (var part in Parts) {
-                part.Offset = pos;
-                pos += part.Length;
+                part.Offset = TotalLength;
+                TotalLength += part.Length;
             }
         }
 
@@ -82,20 +117,40 @@ namespace Celeste.Mod.RainTools.Pipes {
         //         Active = false;
         // }
 
-        // public void AddPulse(Pulse pulse) {
-        //     pulses.Add(pulse);
-        //     Active = true;
-        // }
+        public void Add(Vessel pulse) {
+            vessels.Add(pulse);
+            // Active = true;
+        }
 
         // public void AddFlash(Flash flash) {
         //     flashes.Add(flash);
         //     Active = true;
         // }
 
-        // public Color ColorAt(float distance) {
+        // public Color ColorAt(float offset) {
         //     // todo
         //     return Color.Black;
         // }
+
+        public override void Update() {
+            base.Update();
+
+            vessels.RemoveAll((vessel) => {
+                vessel.Update();
+
+                bool arrived = vessel.Arrived(TotalLength);
+
+                if (arrived) {
+                    if (vessel.Touches(0f)) {
+                        Start.VesselArrived(vessel);
+                    } else {
+                        End.VesselArrived(vessel);
+                    }
+                }
+
+                return arrived;
+            });
+        }
 
     }
 }

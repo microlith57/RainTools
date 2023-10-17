@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Celeste.Mod.RainTools {
     public class RainToolsModule : EverestModule {
@@ -16,6 +16,7 @@ namespace Celeste.Mod.RainTools {
 #if DEBUG
             // debug builds use verbose logging
             Logger.SetLogLevel(nameof(RainToolsModule), LogLevel.Verbose);
+            Logger.Log(LogLevel.Verbose, nameof(RainToolsModule), "Loading RainTools with verbose logging");
 #else
             // release builds use info logging to reduce spam in log files
             Logger.SetLogLevel(nameof(RainToolsModule), LogLevel.Info);
