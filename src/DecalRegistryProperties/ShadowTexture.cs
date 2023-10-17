@@ -33,7 +33,7 @@ namespace Celeste.Mod.RainTools.DecalRegistryProperties {
 
             private void RenderShadow(DirectionalLightingRenderer state) {
                 if (Textures.Count > 0)
-                    Textures[(int) frame].DrawCentered(Decal.Position + state.Light * Offset, Color, Decal.scale);
+                    Textures[(int) frame].DrawCentered(Decal.Position + state.Light * Offset, Color, Decal.scale, Decal.Rotation);
             }
 
         }

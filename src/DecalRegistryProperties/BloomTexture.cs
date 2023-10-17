@@ -31,7 +31,7 @@ namespace Celeste.Mod.RainTools.DecalRegistryProperties {
 
             private void RenderBloom() {
                 if (Textures.Count > 0)
-                    Textures[(int) frame].DrawCentered(Decal.Position, Color, Decal.scale);
+                    Textures[(int) frame].DrawCentered(Decal.Position, Color, Decal.scale, Decal.Rotation);
             }
 
         }

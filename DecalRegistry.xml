@@ -1,0 +1,14 @@
+<decals>
+  <decal path="RainTools/tiny_signs/">
+    <!-- put the base image here, so that further images go on top -->
+    <raintools_put_decal_image_here />
+    <!-- add another decal image, of just the light; this inherits the decal's colour -->
+    <raintools_another_image frames="1" />
+    <!-- make it glowy -->
+    <raintools_light_texture frames="2" />
+    <!-- remove the colour of the base image (from the first step) -->
+    <raintools_override color="ffffff" />
+    <!-- make the base image only display the first frame -->
+    <animation frames="0" />
+  </decal>
+</decals>
