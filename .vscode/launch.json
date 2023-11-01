@@ -21,7 +21,8 @@
       },
       "justMyCode": false,
       "sourceFileMap": {
-        "RainTools/": "${workspaceFolder}"
+        "RainTools/": "${workspaceFolder}",
+        "/home/vsts/work/1/s/": "${workspaceFolder}/../../../../everest/"
       },
       "requireExactSource": false
     },
