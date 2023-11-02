@@ -105,7 +105,12 @@ namespace Celeste.Mod.RainTools.Backdrops {
                     * Matrix.CreateTranslation(-1f, 1f, 0f);
 
             var effect = GFX.FxPrimitive;
-            var blendState = FrostHelper.API.API.GetBackdropBlendState(this) ?? BlendState.AlphaBlend;
+
+#if FROSTHELPER_BLENDSTATE_COMPAT
+                var blendState = FrostHelper.API.API.GetBackdropBlendState(this) ?? BlendState.AlphaBlend;
+#else
+                var blendState = BlendState.AlphaBlend;
+#endif
 
             Engine.Instance.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
             Engine.Instance.GraphicsDevice.BlendState = blendState;

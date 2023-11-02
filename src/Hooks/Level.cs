@@ -47,7 +47,12 @@ namespace Celeste.Mod.RainTools.Hooks {
                 var a = GFX.ColorGrades.GetOrDefault(bg.ColorgradeA, GFX.ColorGrades["none"]);
                 var b = GFX.ColorGrades.GetOrDefault(bg.ColorgradeB, GFX.ColorGrades["none"]);
                 var fac = bg.LerpFactor;
+
+#if FROSTHELPER_BLENDSTATE_COMPAT
                 var blendState = FrostHelper.API.API.GetBackdropBlendState(bg) ?? BlendState.AlphaBlend;
+#else
+                var blendState = BlendState.AlphaBlend;
+#endif
 
                 Engine.Instance.GraphicsDevice.SetRenderTarget(temp);
                 ColorGrade.Set(a, b, fac);

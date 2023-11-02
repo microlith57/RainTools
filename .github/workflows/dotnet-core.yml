@@ -28,7 +28,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build RainTools.csproj --configuration Release --no-restore
+      run: dotnet build RainTools.csproj /property:DefineConstants=FROSTHELPER_BLENDSTATE_COMPAT --configuration Release --no-restore
       env:
         CelestePrefix: ${{ github.workspace }}/lib-stripped
 
