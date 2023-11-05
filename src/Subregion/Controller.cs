@@ -1,4 +1,5 @@
 ﻿using Celeste.Mod.Entities;
+using Celeste.Mod.RainTools.Triggers;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
@@ -15,15 +16,21 @@ namespace Celeste.Mod.RainTools.Subregion {
     [Tracked]
     public class Controller : Entity {
 
-        private enum ShowModeOptions {
+        private enum ShowModes {
             Always,
             OncePerSession,
             OncePerFile
         };
 
-        private bool TriggerOnly;
+        private enum TriggerModes {
+            EnterRoom,
+            TriggerDetect,
+            TriggerOnly
+        }
 
-        private ShowModeOptions ShowMode;
+        private ShowModes ShowMode;
+
+        private TriggerModes TriggerMode;
 
         private string CycleTag;
 
@@ -43,14 +50,13 @@ namespace Celeste.Mod.RainTools.Subregion {
             DialogKey = data.Attr("dialogKey", "");
             Exclude = data.Attr("exclude", "");
             OnlyIn = data.Attr("onlyIn", "");
-            ShowMode = data.Enum("showMode", ShowModeOptions.OncePerSession);
+            ShowMode = data.Enum("showMode", ShowModes.OncePerSession);
             SubregionID = data.Attr("subregionID", "default");
-            TriggerOnly = data.Bool("triggerOnly", false);
+            TriggerMode = data.Enum("triggerMode", TriggerModes.EnterRoom);
             #endregion
 
             #region Components
             Add(new TransitionListener {
-                // check rooms
                 OnOutBegin = () => {
                     HandleTransition(false);
                 }
@@ -66,7 +72,13 @@ namespace Celeste.Mod.RainTools.Subregion {
             // make sure the room is one of ours and its not trigger only
             if (!level.Session.MapData.ParseLevelsList(OnlyIn).Contains(roomName)
                 || level.Session.MapData.ParseLevelsList(Exclude).Contains(roomName)
-                || TriggerOnly && !fromTrigger)
+                || TriggerMode == TriggerModes.TriggerOnly && !fromTrigger)
+                return;
+
+            // if in trigger detect mode, the room has a trigger, and this was not from a trigger, return
+            if (TriggerMode == TriggerModes.TriggerDetect
+                && level.Tracker.GetEntity<SubregionTextElementTrigger>() != null
+                && !fromTrigger)
                 return;
 
             // return if we're in the same subregion
@@ -77,8 +89,8 @@ namespace Celeste.Mod.RainTools.Subregion {
             RainToolsModule.Session.CurrentSubregionID = SubregionID;
             
             // if it's once per session or once per file blah blah blah you get it
-            if ((RainToolsModule.Session.VisitedSubregionIDs.Contains(SubregionID) && ShowMode == ShowModeOptions.OncePerSession)
-                || (RainToolsModule.SaveData.VisitedSubregionIDs.Contains(SubregionID) && ShowMode == ShowModeOptions.OncePerFile))
+            if ((RainToolsModule.Session.VisitedSubregionIDs.Contains(SubregionID) && ShowMode == ShowModes.OncePerSession)
+                || (RainToolsModule.SaveData.VisitedSubregionIDs.Contains(SubregionID) && ShowMode == ShowModes.OncePerFile))
                 return;
 
             // update where we've been
@@ -90,6 +102,7 @@ namespace Celeste.Mod.RainTools.Subregion {
                 RainToolsModule.SaveData.VisitedSubregionIDs.Add(SubregionID);
             }
             
+            // could make duration, easeTimer, and delay controllable
             Activate(delay: fromTrigger ? 0f : 1.5f);
         }
 

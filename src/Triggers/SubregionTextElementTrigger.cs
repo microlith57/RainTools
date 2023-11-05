@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Celeste.Mod.RainTools.Triggers {
     [CustomEntity("RainTools/SubregionTextElementTrigger")]
+    [Tracked]
     public class SubregionTextElementTrigger : Trigger {
 
         private string SubregionID;
@@ -25,14 +26,15 @@ namespace Celeste.Mod.RainTools.Triggers {
         public override void OnEnter(Player player) {
             base.OnEnter(player);
             List<Entity> controllers = (Scene as Level).Tracker.GetEntities<Controller>();
+
+            // check for a controller with the same subregion ID and activate it
             foreach (Controller controller in controllers) {
                 if (controller.SubregionID != SubregionID)
                     continue;
                 controller.HandleTransition(true);
+                RemoveSelf();
                 return;
             }
-            Logger.Log(nameof(RainToolsModule), "");
         }
-
     }
 }

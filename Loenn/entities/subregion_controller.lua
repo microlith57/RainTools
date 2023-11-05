@@ -15,13 +15,17 @@ subregion_controller.placements = {
     exclude = "",
     subregionID = "",
     showMode = "OncePerSession",
-    triggerOnly = false
+    triggerMode = "EnterRoom"
   }
 }
 
 subregion_controller.fieldInformation = {
   showMode = {
     options = {"Always", "OncePerSession", "OncePerFile"},
+    editable = false
+  },
+  triggerMode = {
+    options = {"EnterRoom", "TriggerDetect", "TriggerOnly"},
     editable = false
   }
 }
@@ -31,7 +35,7 @@ subregion_controller.fieldOrder = {
   "cycleTag", "dialogKey",
   "onlyIn", "exclude",
   "subregionID", "showMode",
-  "triggerOnly"
+  "triggerMode"
 }
 
 function subregion_controller.sprite(room, entity)

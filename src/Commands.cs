@@ -24,9 +24,13 @@ namespace Celeste.Mod.RainTools {
         }
 
         [Command("subregiontext", "displays a subregion text element")]
-        public static void SubregionText(string cycleTag, string dialogKey, float duration = 10f, float easeTime = .25f, float delay = 1.5f) {
+        public static void SubregionText(string cycleTag, string dialogKey, float duration = 10f, float easeTime = .25f, float delay = 0f) {
             Engine.Scene.Add(new TextElement(cycleTag, dialogKey, duration, easeTime, delay));
         }
 
+        [Command("currentSubregion", "writes the current subregion ID")]
+        public static void CurrentSubregion() {
+            Engine.Commands.Log($"current subregion ID: {RainToolsModule.Session.CurrentSubregionID}");
+        }
     }
 }

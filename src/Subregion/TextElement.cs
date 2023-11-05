@@ -69,19 +69,21 @@ namespace Celeste.Mod.RainTools.Subregion {
         public override void Render() {
             Level level = Scene as Level;
             string text = $"Cycle {cycleNum} ~ {Dialog.Clean(AreaData.Areas[SaveData.Instance.Areas_Safe[level.Session.Area.ID].ID_Safe].Name)}, {subregionText}";
+
+            // hide if paused, the player is retrying, or if a cutscene is being skipped (idk why, might remove some of that)
             if (level.FrozenOrPaused || level.RetryPlayerCorpse != null || level.SkippingCutscene)
                 return;
 
-            float thicknessPercent = 0.05f;
-            float thickness = Engine.Height * thicknessPercent;
-            float barHeight = (1f - (1f - barEase) * (1f - barEase)) * thicknessPercent * Engine.Height;
-            float bottomBarY = Engine.Height - barHeight;
+            float thicknessPercent = 0.05f; // this could be a controllable field
+            float thickness = Engine.Height * thicknessPercent; // thickness in pixels
+            float barHeight = (1f - (1f - barEase) * (1f - barEase)) * thicknessPercent * Engine.Height; // eased thickness
+            float bottomBarY = Engine.Height - barHeight; // y position for the bottom bar
 
             Draw.Rect(0f, bottomBarY, Engine.Width, barHeight + 10f, Color.Black);
-            Draw.Rect(0f, 0f, Engine.Width, barHeight + 10f, Color.Black);
+            Draw.Rect(0f, -10f, Engine.Width, barHeight + 10f, Color.Black);
 
-            float fontHeight = ActiveFont.Measure(text).Y;
-            float textHeight = (thicknessPercent * Engine.Height - .25f * thickness) / fontHeight;
+            float fontHeight = ActiveFont.Measure(text).Y; // the height of the current font
+            float textHeight = (thicknessPercent * Engine.Height - .25f * thickness) / fontHeight; // the height as a scalar that the text should have
 
             ActiveFont.Draw(text, new Vector2(thickness, bottomBarY + Engine.Height * thicknessPercent / 2f), new Vector2(0f, 0.5f), Vector2.One * textHeight, Color.White * textEase);
 
@@ -107,7 +109,7 @@ namespace Celeste.Mod.RainTools.Subregion {
                 yield return null;
             }
 
-            // reset timer
+            // reset timer and ease bars then text
             timer = 0f;
             while (timer < EaseTime) {
                 barEase += Engine.DeltaTime / EaseTime;
@@ -124,15 +126,17 @@ namespace Celeste.Mod.RainTools.Subregion {
             }
             textEase = 1f;
 
+            // wait to close it
             while (timer < Duration - (EaseTime * 2))
                 yield return null;
-            Logger.Log(nameof(RainToolsModule), "starting close routine");
             yield return Close();
         }
 
         private IEnumerator Close() {
             if (!closing) {
                 closing = true;
+
+                // make sure timer is at the appropriate time, then ease text then bars
                 timer = Duration - (EaseTime * 2);
                 while (timer < Duration - EaseTime) {
                     textEase -= Engine.DeltaTime / EaseTime;
@@ -145,7 +149,6 @@ namespace Celeste.Mod.RainTools.Subregion {
                 }
                 barEase = 0f;
                 RemoveSelf();
-                Logger.Log(nameof(RainToolsModule), "removed self");
             }
         }
     }
