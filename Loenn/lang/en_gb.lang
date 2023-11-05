@@ -87,6 +87,18 @@ entities.RainTools/FlagCycleController.attributes.description.stateOnEnter=When 
 entities.RainTools/FlagCycleController.attributes.description.stateOnLeave=When the cycle exits this trigger, the flag is set to the value of this checkbox.
 entities.RainTools/FlagCycleController.attributes.description.arcAngle=Radians of arc that this trigger covers.
 
+# -- the subregion controller --
+
+# subregion
+entities.RainTools/SubregionController.placements.name.controller=Subregion Controller
+entities.RainTools/SubregionController.attributes.description.cycleTag=Cycle to bind this controller to.
+entities.RainTools/SubregionController.attributes.description.dialogKey=Dialog key for this subregion.
+entities.RainTools/SubregionController.attributes.description.onlyIn=Comma seperated list defining the rooms this controller applies to.
+entities.RainTools/SubregionController.attributes.description.exclude=Comma seperated list defining the rooms this controller DOES NOT apply to.
+entities.RainTools/SubregionController.attributes.description.subregionID=This subregion's ID.
+entities.RainTools/SubregionController.attributes.description.show=Defines when to show the text element.
+entities.RainTools/SubregionController.attributes.description.triggerOnly=Text element is only shown when a Subregion Text Element Trigger is entered.
+
 # -- utility controllers --
 
 # global entity
@@ -107,6 +119,10 @@ triggers.RainTools/LightingBlurFade.placements.name.trigger=Lighting Blur Fade
 triggers.RainTools/LightingBlurFade.attributes.description.styleTag=Styleground tag for the Sunlight effects to modify.
 triggers.RainTools/LightingBlurFade.attributes.description.positionMode=Determines which direction the blur fades towards.
 triggers.RainTools/LightingBlurFade.attributes.description.mode=Which blur layers to change.
+
+# subregion text
+triggers.RainTools/SubregionTextElementTrigger.placements.name.trigger=Subregion Text Element Trigger
+triggers.RainTools/SubregionTextElementTrigger.attributes.description.subregionID=The subregion ID for the Subregion Controller to activate.
 
 # -- effects --
 

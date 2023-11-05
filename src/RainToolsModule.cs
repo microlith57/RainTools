@@ -8,6 +8,9 @@ namespace Celeste.Mod.RainTools {
         public override Type SettingsType => typeof(RainToolsModuleSettings);
         public static RainToolsModuleSettings Settings => (RainToolsModuleSettings) Instance._Settings;
 
+        public override Type SaveDataType => typeof(RainToolsModuleSaveData);
+        public static RainToolsModuleSaveData SaveData => (RainToolsModuleSaveData) Instance._SaveData;
+
         public override Type SessionType => typeof(RainToolsModuleSession);
         public static RainToolsModuleSession Session => (RainToolsModuleSession) Instance._Session;
 

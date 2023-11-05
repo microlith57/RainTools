@@ -1,3 +1,4 @@
+using Celeste.Mod.RainTools.Subregion;
 using Monocle;
 
 namespace Celeste.Mod.RainTools {
@@ -20,6 +21,11 @@ namespace Celeste.Mod.RainTools {
                 Cycles.Debugging = null;
             else
                 Cycles.Debugging = cycle;
+        }
+
+        [Command("subregiontext", "displays a subregion text element")]
+        public static void SubregionText(string cycleTag, string dialogKey, float duration = 10f, float easeTime = .25f, float delay = 1.5f) {
+            Engine.Scene.Add(new TextElement(cycleTag, dialogKey, duration, easeTime, delay));
         }
 
     }

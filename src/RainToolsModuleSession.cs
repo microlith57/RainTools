@@ -5,5 +5,9 @@ namespace Celeste.Mod.RainTools {
 
         public Dictionary<string, float> CycleProgressions { get; set; } = new();
 
+        public HashSet<string> VisitedSubregionIDs { get; set; } = new();
+
+        public string CurrentSubregionID { get; set; }
+
     }
 }
