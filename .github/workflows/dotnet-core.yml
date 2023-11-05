@@ -35,7 +35,7 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: RainTools
+        name: RainTools_$GITHUB_REF
         path: |
           everest.yaml
           bin/RainTools.*
