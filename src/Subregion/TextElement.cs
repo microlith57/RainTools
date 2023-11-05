@@ -1,12 +1,8 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
 using Monocle;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 using System.Collections;
-using FMOD;
+using System.Collections.Generic;
 
 namespace Celeste.Mod.RainTools.Subregion {
 
