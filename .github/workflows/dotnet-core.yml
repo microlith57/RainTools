@@ -42,3 +42,13 @@ jobs:
           Loenn
           Graphics
         if-no-files-found: error
+        
+    - name: Zip Mod
+      run: zip RainTools_${{ github.ref_name }}.zip -r everest.yaml bin/RainTools.* Loenn Graphics
+
+    - name: Upload Result
+      uses: sinshutu/upload-to-discord@v2.0.0
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      with:
+        args: RainTools_${{ github.ref_name }}.zip
