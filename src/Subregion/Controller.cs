@@ -26,8 +26,6 @@ namespace Celeste.Mod.RainTools.Subregion {
 
         private TriggerModes TriggerMode;
 
-        private static bool justDied;
-
         private string CycleTag;
 
         private string Exclude;
@@ -63,16 +61,6 @@ namespace Celeste.Mod.RainTools.Subregion {
             #endregion
         }
 
-        /*
-        public static void Load() {
-            Everest.Events.Player.OnSpawn += Event_Player_OnSpawn;
-        }
-
-        public static void Unload() {
-            Everest.Events.Player.OnSpawn -= Event_Player_OnSpawn;
-        }
-        */
-
         public void HandleTransition(bool fromTrigger) {
             // TODO: make this cleaner
             Level level = Scene as Level;
@@ -81,27 +69,25 @@ namespace Celeste.Mod.RainTools.Subregion {
             // make sure the room is one of ours and its not trigger only
             if (!level.Session.MapData.ParseLevelsList(OnlyIn).Contains(roomName)
                 || level.Session.MapData.ParseLevelsList(Exclude).Contains(roomName)
-                || TriggerMode == TriggerModes.TriggerOnly && !fromTrigger && !justDied)
+                || TriggerMode == TriggerModes.TriggerOnly && !fromTrigger)
                 return;
 
             // if in trigger detect mode, the room has a trigger, and this was not from a trigger, return
             if (TriggerMode == TriggerModes.TriggerDetect
                 && level.Tracker.GetEntity<SubregionTextElementTrigger>() != null
-                && !fromTrigger
-                && !justDied)
+                && !fromTrigger)
                 return;
 
             // return if we're in the same subregion
-            if (RainToolsModule.Session.CurrentSubregionID == SubregionID && !justDied)
+            if (RainToolsModule.Session.CurrentSubregionID == SubregionID)
                 return;
 
             // update our current subregion
             RainToolsModule.Session.CurrentSubregionID = SubregionID;
             
             // if it's once per session or once per file blah blah blah you get it
-            if ((RainToolsModule.Session.VisitedSubregionIDs.Contains(SubregionID) && ShowMode == ShowModes.OncePerSession
+            if (RainToolsModule.Session.VisitedSubregionIDs.Contains(SubregionID) && ShowMode == ShowModes.OncePerSession
                 || RainToolsModule.SaveData.VisitedSubregionIDs.Contains(SubregionID) && ShowMode == ShowModes.OncePerFile)
-                && !justDied)
                 return;
 
             // update where we've been
@@ -114,7 +100,7 @@ namespace Celeste.Mod.RainTools.Subregion {
             }
             
             // could make duration, easeTimer, and delay controllable
-            Activate(delay: (fromTrigger || justDied) ? 0f : 1.5f);
+            Activate(delay: fromTrigger ? 0f : 1.5f);
         }
 
         public TextElement Activate(float duration = 10f, float easeTime = .25f, float delay = 1.5f) {
@@ -122,11 +108,5 @@ namespace Celeste.Mod.RainTools.Subregion {
             Scene.Add(element = new TextElement(CycleTag, RegionDialogKey, SubregionDialogKey, duration, easeTime, delay));
             return element;
         }
-
-        /*
-        private static void Event_Player_OnSpawn(Player player) {
-            justDied = player.JustRespawned;
-        }
-        */
     }
 }
