@@ -26,13 +26,17 @@ namespace Celeste.Mod.RainTools.Subregion {
 
         private TriggerModes TriggerMode;
 
-        private string CycleTag;
+        private static bool justDied;
 
-        private string DialogKey;
+        private string CycleTag;
 
         private string Exclude;
 
         private string OnlyIn;
+
+        private string RegionDialogKey;
+
+        private string SubregionDialogKey;
 
         public string SubregionID;
 
@@ -41,10 +45,11 @@ namespace Celeste.Mod.RainTools.Subregion {
 
             #region Entity Data
             CycleTag = data.Attr("cycleTag", "").Trim();
-            DialogKey = data.Attr("dialogKey", "");
             Exclude = data.Attr("exclude", "");
             OnlyIn = data.Attr("onlyIn", "");
             ShowMode = data.Enum("showMode", ShowModes.OncePerSession);
+            RegionDialogKey = data.Attr("regionDialogKey", "");
+            SubregionDialogKey = data.Attr("subregionDialogKey", "");
             SubregionID = data.Attr("subregionID", "default");
             TriggerMode = data.Enum("triggerMode", TriggerModes.EnterRoom);
             #endregion
@@ -58,6 +63,16 @@ namespace Celeste.Mod.RainTools.Subregion {
             #endregion
         }
 
+        /*
+        public static void Load() {
+            Everest.Events.Player.OnSpawn += Event_Player_OnSpawn;
+        }
+
+        public static void Unload() {
+            Everest.Events.Player.OnSpawn -= Event_Player_OnSpawn;
+        }
+        */
+
         public void HandleTransition(bool fromTrigger) {
             // TODO: make this cleaner
             Level level = Scene as Level;
@@ -66,25 +81,27 @@ namespace Celeste.Mod.RainTools.Subregion {
             // make sure the room is one of ours and its not trigger only
             if (!level.Session.MapData.ParseLevelsList(OnlyIn).Contains(roomName)
                 || level.Session.MapData.ParseLevelsList(Exclude).Contains(roomName)
-                || TriggerMode == TriggerModes.TriggerOnly && !fromTrigger)
+                || TriggerMode == TriggerModes.TriggerOnly && !fromTrigger && !justDied)
                 return;
 
             // if in trigger detect mode, the room has a trigger, and this was not from a trigger, return
             if (TriggerMode == TriggerModes.TriggerDetect
                 && level.Tracker.GetEntity<SubregionTextElementTrigger>() != null
-                && !fromTrigger)
+                && !fromTrigger
+                && !justDied)
                 return;
 
             // return if we're in the same subregion
-            if (RainToolsModule.Session.CurrentSubregionID == SubregionID)
+            if (RainToolsModule.Session.CurrentSubregionID == SubregionID && !justDied)
                 return;
 
             // update our current subregion
             RainToolsModule.Session.CurrentSubregionID = SubregionID;
             
             // if it's once per session or once per file blah blah blah you get it
-            if ((RainToolsModule.Session.VisitedSubregionIDs.Contains(SubregionID) && ShowMode == ShowModes.OncePerSession)
-                || (RainToolsModule.SaveData.VisitedSubregionIDs.Contains(SubregionID) && ShowMode == ShowModes.OncePerFile))
+            if ((RainToolsModule.Session.VisitedSubregionIDs.Contains(SubregionID) && ShowMode == ShowModes.OncePerSession
+                || RainToolsModule.SaveData.VisitedSubregionIDs.Contains(SubregionID) && ShowMode == ShowModes.OncePerFile)
+                && !justDied)
                 return;
 
             // update where we've been
@@ -97,14 +114,19 @@ namespace Celeste.Mod.RainTools.Subregion {
             }
             
             // could make duration, easeTimer, and delay controllable
-            Activate(delay: fromTrigger ? 0f : 1.5f);
+            Activate(delay: (fromTrigger || justDied) ? 0f : 1.5f);
         }
 
         public TextElement Activate(float duration = 10f, float easeTime = .25f, float delay = 1.5f) {
             TextElement element;
-            Scene.Add(element = new TextElement(CycleTag, DialogKey, duration, easeTime, delay));
+            Scene.Add(element = new TextElement(CycleTag, RegionDialogKey, SubregionDialogKey, duration, easeTime, delay));
             return element;
         }
 
+        /*
+        private static void Event_Player_OnSpawn(Player player) {
+            justDied = player.JustRespawned;
+        }
+        */
     }
 }

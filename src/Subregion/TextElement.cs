@@ -3,6 +3,7 @@ using Monocle;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 
 namespace Celeste.Mod.RainTools.Subregion {
 
@@ -13,7 +14,7 @@ namespace Celeste.Mod.RainTools.Subregion {
 
         private bool closing;
 
-        private float barEase;
+        private float barEase = 0f;
 
         private float Delay;
 
@@ -23,21 +24,24 @@ namespace Celeste.Mod.RainTools.Subregion {
 
         private float timer;
 
-        private float textEase;
+        private float textEase = 0f;
 
         private int cycleNum;
 
+        private string regionText;
+
         private string subregionText;
 
-        public TextElement(string cycleTag, string dialogKey, float duration, float easeTime, float delay) {
-            Tag = Tags.HUD | Tags.TransitionUpdate | Tags.Persistent;
+        public TextElement(string cycleTag, string regionDialogKey, string subregionDialogKey, float duration, float easeTime, float delay) {
+            Tag = Tags.HUD | Tags.TransitionUpdate | Tags.Global;
 
             #region Entity Data
             cycleNum = (int) Math.Floor(Cycles.GetProgression(cycleTag));
             Delay = delay;
             Duration = duration;
             EaseTime = easeTime;
-            subregionText = Dialog.Clean(dialogKey.Trim());
+            regionText = Dialog.Clean(regionDialogKey.Trim());
+            subregionText = Dialog.Clean(subregionDialogKey.Trim());
             #endregion
 
             #region Components
@@ -54,17 +58,28 @@ namespace Celeste.Mod.RainTools.Subregion {
             #endregion
         }
 
+        public static void Load() {
+            Everest.Events.Player.OnDie += Event_Player_OnDie;
+        }
+
+        public static void Unload() {
+            Everest.Events.Player.OnDie -= Event_Player_OnDie;
+        }
+
         public override void Update() {
             timer += Engine.DeltaTime;
-            if ((base.Scene as Level).RetryPlayerCorpse != null && !closing) {
-                routine.Replace(Close());
+
+            if ((Scene as Level).Tracker.GetEntity<Player>().JustRespawned && !routine.Active) {
+                routine.Replace(Routine());
+                routine.Active = true;
             }
+
             base.Update();
         }
 
         public override void Render() {
             Level level = Scene as Level;
-            string text = $"Cycle {cycleNum} ~ {Dialog.Clean(AreaData.Areas[SaveData.Instance.Areas_Safe[level.Session.Area.ID].ID_Safe].Name)}, {subregionText}";
+            string text = $"Cycle {cycleNum} ~ {regionText}, {subregionText}";
 
             // hide if paused, the player is retrying, or if a cutscene is being skipped (idk why, might remove some of that)
             if (level.FrozenOrPaused || level.RetryPlayerCorpse != null || level.SkippingCutscene)
@@ -91,7 +106,7 @@ namespace Celeste.Mod.RainTools.Subregion {
             List<Entity> entities = Scene.Tracker.GetEntities<TextElement>();
             foreach (TextElement item in entities) {
                 if (item != this) {
-                    item.Components.Get<Coroutine>().Replace(item.Close());
+                    item.Components.Get<Coroutine>()?.Replace(item.Close());
                 }
             }
             // wait for them
@@ -147,5 +162,13 @@ namespace Celeste.Mod.RainTools.Subregion {
                 RemoveSelf();
             }
         }
+
+        public void ResetOnDeath() {
+            barEase = textEase = 0f;
+            Delay = 1f;
+            closing = routine.Active = false;
+        }
+
+        private static void Event_Player_OnDie(Player player) => player.SceneAs<Level>().Tracker.GetEntity<TextElement>()?.ResetOnDeath();
     }
 }

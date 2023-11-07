@@ -38,6 +38,8 @@ namespace Celeste.Mod.RainTools {
             DecalRegistryProperties.AnotherImage.Load();
             DecalRegistryProperties.Override.Load();
 
+            Subregion.TextElement.Load();
+
             Hooks.hook_Level.Load();
             Hooks.hook_DisplacementRenderer.Load();
             Hooks.hook_LightingRenderer.Load();
@@ -49,6 +51,8 @@ namespace Celeste.Mod.RainTools {
             Hooks.hook_Level.Unload();
             Hooks.hook_DisplacementRenderer.Unload();
             Hooks.hook_LightingRenderer.Unload();
+
+            Subregion.TextElement.Unload();
 
             GlobalEntityAttribute.Unload();
         }
