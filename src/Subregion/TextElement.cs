@@ -28,11 +28,9 @@ namespace Celeste.Mod.RainTools.Subregion {
 
         private int cycleNum;
 
-        private string regionText;
-
         private string subregionText;
 
-        public TextElement(string cycleTag, string regionDialogKey, string subregionDialogKey, float duration, float easeTime, float delay) {
+        public TextElement(string cycleTag, string dialogKey, float duration, float easeTime, float delay) {
             Tag = Tags.HUD | Tags.TransitionUpdate | Tags.Global;
 
             #region Entity Data
@@ -40,8 +38,7 @@ namespace Celeste.Mod.RainTools.Subregion {
             Delay = delay;
             Duration = duration;
             EaseTime = easeTime;
-            regionText = Dialog.Clean(regionDialogKey.Trim());
-            subregionText = Dialog.Clean(subregionDialogKey.Trim());
+            subregionText = Dialog.Clean(dialogKey.Trim());
             #endregion
 
             #region Components
@@ -79,7 +76,7 @@ namespace Celeste.Mod.RainTools.Subregion {
 
         public override void Render() {
             Level level = Scene as Level;
-            string text = $"Cycle {cycleNum} ~ {regionText}, {subregionText}";
+            string text = $"Cycle {cycleNum} ~ {subregionText}";
 
             // hide if paused, the player is retrying, or if a cutscene is being skipped (idk why, might remove some of that)
             if (level.FrozenOrPaused || level.RetryPlayerCorpse != null || level.SkippingCutscene)

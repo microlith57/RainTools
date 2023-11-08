@@ -32,9 +32,7 @@ namespace Celeste.Mod.RainTools.Subregion {
 
         private string OnlyIn;
 
-        private string RegionDialogKey;
-
-        private string SubregionDialogKey;
+        private string DialogKey;
 
         public string SubregionID;
 
@@ -43,11 +41,10 @@ namespace Celeste.Mod.RainTools.Subregion {
 
             #region Entity Data
             CycleTag = data.Attr("cycleTag", "").Trim();
+            DialogKey = data.Attr("dialogKey", "");
             Exclude = data.Attr("exclude", "");
             OnlyIn = data.Attr("onlyIn", "");
             ShowMode = data.Enum("showMode", ShowModes.OncePerSession);
-            RegionDialogKey = data.Attr("regionDialogKey", "");
-            SubregionDialogKey = data.Attr("subregionDialogKey", "");
             SubregionID = data.Attr("subregionID", "default");
             TriggerMode = data.Enum("triggerMode", TriggerModes.EnterRoom);
             #endregion
@@ -105,7 +102,7 @@ namespace Celeste.Mod.RainTools.Subregion {
 
         public TextElement Activate(float duration = 10f, float easeTime = .25f, float delay = 1.5f) {
             TextElement element;
-            Scene.Add(element = new TextElement(CycleTag, RegionDialogKey, SubregionDialogKey, duration, easeTime, delay));
+            Scene.Add(element = new TextElement(CycleTag, DialogKey, duration, easeTime, delay));
             return element;
         }
     }
