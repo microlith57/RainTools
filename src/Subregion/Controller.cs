@@ -81,7 +81,7 @@ namespace Celeste.Mod.RainTools.Subregion {
 
             // update our current subregion
             RainToolsModule.Session.CurrentSubregionID = SubregionID;
-            
+
             // if it's once per session or once per file blah blah blah you get it
             if (RainToolsModule.Session.VisitedSubregionIDs.Contains(SubregionID) && ShowMode == ShowModes.OncePerSession
                 || RainToolsModule.SaveData.VisitedSubregionIDs.Contains(SubregionID) && ShowMode == ShowModes.OncePerFile)
@@ -95,7 +95,7 @@ namespace Celeste.Mod.RainTools.Subregion {
             if (!RainToolsModule.SaveData.VisitedSubregionIDs.Contains(SubregionID)) {
                 RainToolsModule.SaveData.VisitedSubregionIDs.Add(SubregionID);
             }
-            
+
             // could make duration, easeTimer, and delay controllable
             Activate(delay: fromTrigger ? 0f : 1.5f);
         }
