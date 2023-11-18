@@ -5,7 +5,7 @@ using Monocle;
 
 namespace Celeste.Mod.RainTools.Subregion {
 
-    [CustomEntity($"RainTools/SubregionController")]
+    [CustomEntity("RainTools/SubregionController")]
     [GlobalEntity]
     [Tracked]
     public class Controller : Entity {
@@ -40,6 +40,7 @@ namespace Celeste.Mod.RainTools.Subregion {
             Tag = Tags.Global | Tags.TransitionUpdate;
 
             #region Entity Data
+
             CycleTag = data.Attr("cycleTag", "").Trim();
             DialogKey = data.Attr("dialogKey", "");
             Exclude = data.Attr("exclude", "");
@@ -47,14 +48,17 @@ namespace Celeste.Mod.RainTools.Subregion {
             ShowMode = data.Enum("showMode", ShowModes.OncePerSession);
             SubregionID = data.Attr("subregionID", "default");
             TriggerMode = data.Enum("triggerMode", TriggerModes.EnterRoom);
+
             #endregion
 
             #region Components
+
             Add(new TransitionListener {
                 OnOutBegin = () => {
                     HandleTransition(false);
                 }
             });
+
             #endregion
         }
 
@@ -64,6 +68,7 @@ namespace Celeste.Mod.RainTools.Subregion {
             string roomName = level.Session.LevelData.Name;
 
             // make sure the room is one of ours and its not trigger only
+            // TODO: use a Load static method to get MapData at entity ctor time, and parse the lists then to avoid repeated processing
             if (!level.Session.MapData.ParseLevelsList(OnlyIn).Contains(roomName)
                 || level.Session.MapData.ParseLevelsList(Exclude).Contains(roomName)
                 || TriggerMode == TriggerModes.TriggerOnly && !fromTrigger)
@@ -88,21 +93,16 @@ namespace Celeste.Mod.RainTools.Subregion {
                 return;
 
             // update where we've been
-            if (!RainToolsModule.Session.VisitedSubregionIDs.Contains(SubregionID)) {
-                RainToolsModule.Session.VisitedSubregionIDs.Add(SubregionID);
-            }
-
-            if (!RainToolsModule.SaveData.VisitedSubregionIDs.Contains(SubregionID)) {
-                RainToolsModule.SaveData.VisitedSubregionIDs.Add(SubregionID);
-            }
+            RainToolsModule.Session.VisitedSubregionIDs.Add(SubregionID);
+            RainToolsModule.SaveData.VisitedSubregionIDs.Add(SubregionID);
 
             // could make duration, easeTimer, and delay controllable
             Activate(delay: fromTrigger ? 0f : 1.5f);
         }
 
         public TextElement Activate(float duration = 10f, float easeTime = .25f, float delay = 1.5f) {
-            TextElement element;
-            Scene.Add(element = new TextElement(CycleTag, DialogKey, duration, easeTime, delay));
+            TextElement element = new(CycleTag, DialogKey, duration, easeTime, delay);
+            Scene.Add(element);
             return element;
         }
     }

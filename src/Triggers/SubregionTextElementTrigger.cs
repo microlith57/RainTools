@@ -15,7 +15,9 @@ namespace Celeste.Mod.RainTools.Triggers {
             : base(data, offset) {
 
             #region Entity Data
-            SubregionID = data.Attr("subregionID", "");
+
+            SubregionID = data.Attr("subregionID");
+
             #endregion
         }
 

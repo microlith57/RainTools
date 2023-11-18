@@ -3,7 +3,6 @@ using Monocle;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing.Printing;
 
 namespace Celeste.Mod.RainTools.Subregion {
 
@@ -34,24 +33,28 @@ namespace Celeste.Mod.RainTools.Subregion {
             Tag = Tags.HUD | Tags.TransitionUpdate | Tags.Global;
 
             #region Entity Data
+
             cycleNum = (int) Math.Floor(Cycles.GetProgression(cycleTag));
             Delay = delay;
             Duration = duration;
             EaseTime = easeTime;
             subregionText = Dialog.Clean(dialogKey.Trim());
+
             #endregion
 
             #region Components
-            Add(routine = new Coroutine(Routine()));
-            routine.UseRawDeltaTime = true;
-            Add(new TransitionListener {
 
+            Add(routine = new Coroutine(Routine()) {
+                UseRawDeltaTime = true
+            });
+
+            Add(new TransitionListener {
                 OnOutBegin = delegate {
                     if (!closing)
                         routine.Replace(Close());
                 }
-
             });
+
             #endregion
         }
 
