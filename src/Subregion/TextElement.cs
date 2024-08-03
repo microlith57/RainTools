@@ -69,7 +69,7 @@ namespace Celeste.Mod.RainTools.Subregion {
         public override void Update() {
             timer += Engine.DeltaTime;
 
-            if ((Scene as Level).Tracker.GetEntity<Player>().JustRespawned && !routine.Active) {
+            if ((Scene as Level).Tracker.GetEntity<Player>() is Player player && player.JustRespawned && !routine.Active) {
                 routine.Replace(Routine());
                 routine.Active = true;
             }
